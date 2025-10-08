@@ -1,0 +1,137 @@
+{% extends 'frontend/base.html' %}
+
+
+{% block style %}
+
+{% endblock %}
+
+
+{% block content %}
+    <div class="company-area pt-100 pb-3" style="background: #f1f1f1;">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-9">
+                    <div class="section-title">
+                        <h2 style="font-size: 28px" class="fw-bolder">{{ report.title }}</h2>
+                        <p>Rapport du {{ report.created|date }}</p>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="browse-btn mt-2">
+                        {% if user.role != user.EMPLOYEE %}
+                        <button data-bs-toggle="modal" data-bs-target="#exampleModal"
+                           class="post-btn mt-3">Noter le rapport</button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="job-details-area pt-5 pb-70">
+        <div class="container">
+            <div class="row">
+                <div class="card col-lg-9">
+                    <div class="job-details-content">
+                        <div class="col-lg-12">
+                            <div class="find-jobs-card align-items-center">
+                                <div class="content">
+                                    <div class="w-100 mb-4">
+                                        <p class="w-100 fs-4 p-3 bg-success-subtle rounded-3 text-success text-center">
+                                            Details du rapport
+                                        </p>
+                                    </div>
+                                    <div class="mb-4">
+                                        <div class="row pt-25">
+                                            <div class="col-md-12">
+                                                <hr>
+                                                <p>Type de Rapport : <span class="badge bg-success-subtle text-success fs-6 fw-normal fst-italic">{{ report.get_type_display }}</span></p>
+                                                <hr>
+                                                {% if tasks %}
+                                                <h5>Taches accomplies</h5>
+                                                <ul>
+                                                    {% for task in tasks %}
+                                                        <li>{{ task.title }} {% if task.is_completed %}<i class="ri ri-check-fill fs-5 text-success"></i>{% else %}<i class="ri ri-close-fill fs-5 text-danger"></i>{% endif %}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                                {% endif %}
+
+                                                {% if report.employee_comments %}
+                                                <h5>Commentaire Employé</h5>
+                                                <p class="text-dark-emphasis">{{ report.employee_comments }}</p>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    {% if report.file %}
+                    <div class="card-footer text-end">
+                        <a href="{{ report.file.url }}" class="btn btn-outline-success" target="_blank" tabindex="1">Voir le fichier joint</a>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="col-lg-3">
+                    <div class="job-details-widget-side pr-20">
+                        {% if report.marks %}
+                        <div class="card w-100 mb-4">
+                            <div class="card-header">
+                                <h5 class="card-title">Note du rapport</h5>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">Note : {{ report.marks }}/5</h5>
+                                <p class="card-text"><span class="fst-italic fw-bold text-dark">Observation : </span>{{ report.responsible_comments|default_if_none:"Pas d'observation" }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="post-a-new-job-box pt-3" style="margin-bottom: 5px; padding-bottom: 0px">
+                    <form method="post" action="{% url 'reporting:mark_report' report.id %}" enctype="multipart/form-data" id="job-post-form">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Attribution d'une note</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12">
+                                        <div class="form-group">
+                                            <label for="title">Note sur 5 <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="number" class="form-control" name="marks"
+                                                   id="title"
+                                                   placeholder="ex.: 4" required>
+                                    </div>
+                                    <div class="col-xl-12 col-lg-12 col-md-12">
+                                        <div class="form-group">
+                                            <label for="comments">Observation</label>
+                                            <textarea class="form-control" name="responsible_comments"
+                                                      id="comments" placeholder="Votre Observation par a l'employe"
+                                                      rows="3"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer browse-btn">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                            <button type="submit" class="post-btn rounded-3">Ajouter</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,18 @@
+<div class="activity-item" id="task-{{ task.id }}">
+    <div class="activity-left">
+        <span class="activity-label">{{ task.title }}</span>
+    </div>
+    <div class="activity-actions">
+        <button class="delete-btn" type="button"
+                hx-delete="{% url 'reporting:delete_task' task.id %}"
+                hx-target="#task-{{ task.id }}"
+                hx-swap="outerHTML"
+        >
+            <i class="ri-delete-bin-line"></i>
+        </button>
+        <input type="checkbox" class="custom-checkbox" {% if task.is_completed %}checked{% endif %}
+               hx-get="{% url 'reporting:complete_task' task.id %}"
+               hx-swap="none"
+        >
+    </div>
+</div>

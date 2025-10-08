@@ -1,0 +1,661 @@
+{% extends 'frontend/base.html' %}
+
+{% block style %}
+    <style>
+        .form-step {
+            display: none;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        .progress-bar {
+            transition: width 0.5s ease-in-out;
+        }
+
+        .tab-header {
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding-top: 30px; /* Ajout d'un padding en haut pour le texte */
+        }
+
+        .step {
+            flex: 1;
+            position: relative;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .step-text {
+            position: absolute;
+            width: 100%;
+            top: -25px; /* Place le texte au-dessus du cercle */
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+
+        .step.active .step-text {
+            color: #0d6efd;
+            font-weight: 600;
+        }
+
+        .step.completed .step-text {
+            color: #198754;
+            font-weight: 600;
+        }
+
+        .step-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-connector {
+            position: absolute;
+            top: 15px;
+            height: 2px;
+            background-color: #e9ecef;
+            width: 100%;
+            left: 0;
+        }
+
+        .step.active .step-connector,
+        .step.active .step-circle {
+            background-color: #0d6efd;
+            color: #fff;
+        }
+
+        .step.completed .step-connector,
+        .step.completed .step-circle {
+            background-color: #198754;
+            color: #fff;
+        }
+
+        .invalid-feedback {
+            display: none;
+            font-size: 0.875rem;
+            color: #dc3545;
+        }
+
+        .was-validated .form-control:invalid ~ .invalid-feedback {
+            display: block;
+        }
+
+        .wrapper {
+            position: absolute;
+            background-color: black;
+            opacity: 0.6;
+            width: 100%;
+            min-height: 102vh;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            z-index: 999;
+            display: none;
+        }
+
+        .animated-pills {
+            --min: 40px;
+            width: var(--min);
+            height: 30px;
+            border-radius: 20px;
+            background-color: rgb(209, 202, 193);
+            animation: expand 2s ease-in-out infinite alternate;
+            animation-fill-mode: both;
+        }
+
+        .animated-pills:nth-child(1) {
+            --max: 70px;
+            animation-delay: 0s;
+        }
+
+        .animated-pills:nth-child(2) {
+            --max: 70px;
+            animation-delay: 0.5s;
+        }
+
+        .animated-pills:nth-child(3) {
+            --max: 70px;
+            animation-delay: 1s;
+        }
+
+        .animated-pills:nth-child(4) {
+            --max: 70px;
+            animation-delay: 1.5s;
+        }
+
+        .animated-pills:nth-child(5) {
+            --max: 70px;
+            animation-delay: 2s;
+        }
+
+        @keyframes expand {
+            0% {
+                width: var(--min);
+            }
+
+            100% {
+                width: var(--max);
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="wrapper" id="wrapper-loader">
+        <div class="animated-pills"></div>
+        <div class="animated-pills"></div>
+        <div class="animated-pills"></div>
+        <div class="animated-pills"></div>
+        <div class="animated-pills"></div>
+    </div>
+    <div class="user-area pt-150 pb-70">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 col-md-10 mx-auto">
+                    <div class="card shadow-sm user-all-form contact-form">
+                        <div class="card-body">
+                            <h5 class="text-center p-3 text-white rounded-3 mb-5" style="background: #151C3CE5;">
+                                Candidater à l'offre : {{ job.title }}
+                            </h5>
+
+                            <!-- Progress bar -->
+                            <div class="step-indicator mb-4">
+                                <div class="step active" data-step="1">
+                                    <div class="step-connector"></div>
+                                    <div class="step-circle">1</div>
+                                    <div class="step-text">Informations personnelles</div>
+                                </div>
+                                <div class="step" data-step="2">
+                                    <div class="step-connector"></div>
+                                    <div class="step-circle">2</div>
+                                    <div class="step-text">Documents</div>
+                                </div>
+                                <div class="step" data-step="3">
+                                    <div class="step-connector"></div>
+                                    <div class="step-circle">3</div>
+                                    <div class="step-text">Compte</div>
+                                </div>
+                            </div>
+
+                            <form method="POST" enctype="multipart/form-data" id="multiStepForm"
+                                  class="needs-validation" novalidate>
+                                {% if user_form.errors or freelancer_form.errors or form_diploma.errors or form_applied.errors %}
+                                    <div class="my-3 p-2 bg-danger-subtle text-danger rounded-3">
+                                        {{ user_form.errors }}
+                                        {{ freelancer_form.errors }}
+                                        {{ form_diploma.errors }}
+                                        {{ form_applied.errors }}
+                                    </div>
+                                {% endif %}
+
+                                {% if message_error %}
+                                    <p class="my-3 p-2 bg-danger-subtle fw-bold text-danger text-center rounded-3">{{ message_error }}</p>
+                                {% else %}
+                                    <p class="my-3 px-3 py-2 bg-dark-subtle text-muted rounded-3">
+                                        Veuillez renseigner tous les champs obligatoires (<span
+                                            class="text-danger">*</span>).
+                                    </p>
+                                {% endif %}
+
+                                {% csrf_token %}
+                                <!-- Step 1 -->
+                                <div class="form-step active" id="step1">
+                                    <div class="row mb-3">
+                                        <div class="col-md-12 mt-4">
+                                            <div class="form-group">
+                                                <label for="{{ freelancer_form.identity_doc_number.name }}">{{ freelancer_form.identity_doc_number.label }}</label>
+                                                <input type="text" placeholder="Ex: CI00XXXXXXX" class="form-control"
+                                                       data-error="Please Enter Your Name"
+                                                       id="{{ freelancer_form.identity_doc_number.name }}"
+                                                       name="{{ freelancer_form.identity_doc_number.name }}">
+
+                                                {% if freelancer_form.identity_doc_number.errors %}
+                                                    <small class="text-danger">{{ freelancer_form.identity_doc_number.errors }}</small>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="{{ user_form.first_name.name }}">{{ user_form.first_name.label }}
+                                                    <span
+                                                            class="text-danger">*</span></label>
+                                                <input type="text" placeholder="Dupont" class="form-control" required
+                                                       data-error="Please Enter Your Name"
+                                                       id="{{ user_form.first_name.name }}"
+                                                       name="{{ user_form.first_name.name }}">
+                                                {% if user_form.first_name.errors %}
+                                                    <small class="text-danger">{{ user_form.first_name.errors }}</small>
+                                                {% endif %}
+                                                <div class="invalid-feedback">
+                                                    Veuillez saisir votre Nom
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="{{ user_form.last_name.name }}">{{ user_form.last_name.label }}
+                                                    <span
+                                                            class="text-danger">*</span></label>
+                                                <input type="text" placeholder="Laurent" class="form-control" required
+                                                       data-error="Please Enter Your Name"
+                                                       name="{{ user_form.last_name.name }}"
+                                                       id="{{ user_form.last_name.name }}">
+                                                {% if user_form.last_name.errors %}
+                                                    <small class="text-danger">{{ user_form.last_name.errors }}</small>
+                                                {% endif %}
+                                                <div class="invalid-feedback">
+                                                    Veuillez saisir votre/vos prénom(s)
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label for="{{ user_form.email.name }}">{{ user_form.email.label }}
+                                                    <span
+                                                            class="text-danger">*</span></label>
+                                                <input type="email" id="{{ user_form.email.name }}" class="form-control"
+                                                       required name="{{ user_form.email.name }}"
+                                                       data-error="Please enter Email"
+                                                       placeholder="exemple@gmail.com" hx-post="{% url 'core:validate_email' job.id %}" hx-target="#validate-email" hx-trigger="keyup changed delay:500ms, search"
+                                                       hx-swap="outerHTML">
+                                                {% if user_form.email.errors %}
+                                                    <small class="text-danger">{{ user_form.email.errors }}</small>
+                                                {% endif %}
+                                                <small id="validate-email"></small>
+                                                <div class="invalid-feedback">
+                                                    Veuillez saisir votre Adresse Email
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="{{ freelancer_form.phone.name }}">{{ freelancer_form.phone.label }}
+                                                    <span
+                                                            class="text-danger">*</span></label>
+                                                <input type="text" id="{{ freelancer_form.phone.name }}"
+                                                       class="form-control" required
+                                                       data-error="Please enter Email"
+                                                       name="{{ freelancer_form.phone.name }}"
+                                                       placeholder="Ex: 0724586589">
+
+                                                {% if freelancer_form.phone.errors %}
+                                                    <small class="text-danger">{{ freelancer_form.phone.errors }}</small>
+                                                {% endif %}
+                                                <div class="invalid-feedback">
+                                                    Veuillez saisir votre Numéro de téléphone
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label for="{{ freelancer_form.address.name }}">{{ freelancer_form.address.label }}
+                                                    <span
+                                                            class="text-danger">*</span></label>
+                                                <input type="text" placeholder="Ex: Abidjan, Cocody 2 plateaux"
+                                                       class="form-control" required
+                                                       data-error="Please Enter Your Name"
+                                                       name="{{ freelancer_form.address.name }}"
+                                                       id="{{ freelancer_form.address.name }}">
+
+                                                {% if freelancer_form.address.errors %}
+                                                    <small class="text-danger">{{ freelancer_form.address.errors }}</small>
+                                                {% endif %}
+                                                <div class="invalid-feedback">
+                                                    Veuillez saisir votre Lieu de résidence
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-end mt-4">
+                                        <button type="button" class="default-btn" onclick="nextStep(1)">
+                                            Suivant <i class="fas fa-arrow-right ms-2"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Step 2 -->
+                                <div class="form-step" id="step2">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <div class="form-group">
+                                                <label for="{{ freelancer_form.identity_doc.name }}">{{ freelancer_form.identity_doc.label }}</label>
+                                                <input class="form-control" id="{{ freelancer_form.identity_doc.name }}"
+                                                       type="file"
+                                                       name="{{ freelancer_form.identity_doc.name }}"
+                                                       placeholder="{{ freelancer_form.identity_doc.label }}"
+                                                       accept=".pdf, PDF">
+
+                                                <small id="identity-warning" style="color: red; display: none;">Seuls
+                                                    les
+                                                    fichiers PDF sont autorisés.</small>
+
+                                                {% if freelancer_form.identity_doc.errors %}
+                                                    <small class="text-danger">{{ freelancer_form.identity_doc.errors }}</small>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="form-group">
+                                                <label for="{{ freelancer_form.photo.name }}">{{ freelancer_form.photo.label }}
+                                                    <span
+                                                            class="text-danger">*</span></label>
+                                                <input class="form-control" id="{{ freelancer_form.photo.name }}"
+                                                       type="file"
+                                                       name="{{ freelancer_form.photo.name }}"
+                                                       placeholder="{{ freelancer_form.photo.label }}"
+                                                       required accept=".jpg, .png, .jpeg, JPG, PNG, JPEG">
+                                                <small id="photo-warning" style="color: red; display: none;">Seuls les
+                                                    images (.jpg, .png, .jpeg) sont autorisés.</small>
+
+                                                <div class="invalid-feedback">
+                                                    Veuillez télécharger votre photo
+                                                </div>
+
+                                                {% if freelancer_form.photo.errors %}
+                                                    <small class="text-danger">{{ freelancer_form.photo.errors }}</small>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 mb-3">
+                                            <div class="form-group">
+                                                <label for="{{ form_applied.cv.name }}">{{ form_applied.cv.label }} en
+                                                    PDF <span
+                                                            class="text-danger">*</span></label>
+                                                <input type="file" name="{{ form_applied.cv.name }}"
+                                                       class="form-control" id="cv"
+                                                       placeholder="{{ form_applied.cv.label }}" accept=".pdf, PDF"
+                                                       required/>
+                                                <div class="invalid-feedback">
+                                                    Veuillez télécharger un CV au format PDF.
+                                                </div>
+                                                <small id="cv-warning" style="color: red; display: none;">Seuls les
+                                                    fichiers PDF sont autorisés.</small>
+                                                {% if form_applied.cv.errors %}
+                                                    <small class="text-danger">{{ form_applied.cv.errors }}</small>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 mb-3">
+                                            <div class="form-group">
+                                                <label for="{{ form_diploma.file.name }}">{{ form_diploma.file.label }}
+                                                    en PDF {% if job.number_of_file %}
+                                                        <span class="text-danger">*</span>{% endif %}</label>
+                                                <input type="file" name="{{ form_diploma.file.name }}"
+                                                       class="form-control"
+                                                       placeholder="{{ form_diploma.file.label }}" accept=".pdf, PDF"
+                                                       multiple="{{ job.number_of_file }}" id="file"
+                                                       {% if job.number_of_file %}required{% endif %}/>
+                                                <input type="number" id="file-number" value="{{ job.number_of_file }}"
+                                                       hidden="hidden">
+                                                <div class="invalid-feedback">
+                                                    Veuillez télécharger au moins un fichier au format PDF.
+                                                </div>
+                                                <small id="files-warning" style="color: red; display: none;">Seuls les
+                                                    fichiers PDF sont autorisés.</small>
+                                                <small id="file-warning" style="color: red; display: none;">Vous ne
+                                                    pouvez sélectionner que 3 fichiers maximum.</small>
+                                                {% if form_diploma.file.errors %}
+                                                    <small class="text-danger">{{ form_diploma.file.errors }}</small>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-12 col-lg-12 col-md-12 mb-3">
+                                            <div class="form-group">
+                                                <label for="{{ form_applied.amount.name }}">{{ form_applied.amount.label }}</label>
+                                                <input type="text" class="form-control"
+                                                       name="{{ form_applied.amount.name }}"
+                                                       placeholder="Ex: 100.000 - 500.000"
+                                                       id="{{ form_applied.amount.name }}">
+                                                {% if form_applied.amount.errors %}
+                                                    <small class="text-danger">{{ form_applied.amount.errors }}</small>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12 col-md-12">
+                                            <div class="form-group">
+                                                <label for="{{ form_applied.lm.name }}">{{ form_applied.lm.label }}</label>
+                                                <textarea
+                                                        id="{{ form_applied.lm.name }}"
+                                                        placeholder="{{ form_applied.lm.label }}"
+                                                        name="{{ form_applied.lm.name }}"
+                                                        class="form-control" style="min-height: 150px"
+                                                        oncopy="return false"
+                                                        oncut="return false"
+                                                        onpaste="return false"
+                                                ></textarea>
+                                                <div class="invalid-feedback">
+                                                    Parlez-nous de vous en quelques lignes.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between mt-4">
+                                        <button type="button" class="btn btn-success" onclick="prevStep(1)">
+                                            <i class="fas fa-arrow-left me-2"></i> Précédent
+                                        </button>
+                                        <button type="button" class="btn default-btn" onclick="nextStep(2)">
+                                            Suivant <i class="fas fa-arrow-right ms-2"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Step 3 -->
+                                <div class="form-step" id="step3">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="{{ user_form.password1.name }}">{{ user_form.password1.label }}
+                                                    <span
+                                                            class="text-danger">*</span></label>
+                                                <input class="form-control" id="{{ user_form.password1.name }}"
+                                                       type="password"
+                                                       name="{{ user_form.password1.name }}"
+                                                       placeholder="{{ user_form.password1.label }}" required>
+
+                                                <div class="invalid-feedback">
+                                                    Veuillez saisir un mot de passe.
+                                                </div>
+                                                {% if user_form.password1.errors %}
+                                                    <small class="text-danger">{{ user_form.password1.errors }}</small>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="{{ user_form.password2.name }}">{{ user_form.password2.label }}
+                                                    <span
+                                                            class="text-danger">*</span></label>
+                                                <input class="form-control" id="{{ user_form.password2.name }}"
+                                                       type="password"
+                                                       name="{{ user_form.password2.name }}"
+                                                       placeholder="{{ form.password2.label }}" required>
+                                                <div class="invalid-feedback">
+                                                    Veuillez confirmer votre mot de passe.
+                                                </div>
+                                                {% if user_form.password2.errors %}
+                                                    <small class="text-danger">{{ user_form.password2.errors }}</small>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between mt-4">
+                                        <button type="button" class="btn btn-success" onclick="prevStep(2)">
+                                            <i class="fas fa-arrow-left me-2"></i> Précédent
+                                        </button>
+                                        <button type="submit" class="default-btn">
+                                            <i class="fas fa-check me-2"></i> Soumettre ma candidature
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        const form = document.getElementById('multiStepForm');
+        const steps = document.querySelectorAll('.form-step');
+        const stepIndicators = document.querySelectorAll('.step');
+
+        function validateStep(stepNumber) {
+            const currentStep = document.getElementById(`step${stepNumber}`);
+            const inputs = currentStep.querySelectorAll('input[required], select[required], textarea[required]');
+            let isValid = true;
+
+            inputs.forEach(input => {
+                if (!input.checkValidity()) {
+                    input.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    input.classList.remove('is-invalid');
+                }
+            });
+
+            return isValid;
+        }
+
+        function nextStep(currentStep) {
+            if (validateStep(currentStep)) {
+                // Hide current step
+                document.getElementById(`step${currentStep}`).classList.remove('active');
+                // Show next step
+                document.getElementById(`step${currentStep + 1}`).classList.add('active');
+
+                // Update indicators
+                stepIndicators[currentStep - 1].classList.add('completed');
+                stepIndicators[currentStep].classList.add('active');
+            }
+        }
+
+        function prevStep(step) {
+            // Hide current step
+            document.getElementById(`step${step + 1}`).classList.remove('active');
+            // Show previous step
+            document.getElementById(`step${step}`).classList.add('active');
+
+            // Update indicators
+            stepIndicators[step].classList.remove('active');
+            stepIndicators[step - 1].classList.remove('completed');
+            stepIndicators[step - 1].classList.add('active');
+        }
+
+        form.addEventListener('submit', function (e) {
+            //e.preventDefault();
+            if (validateStep(3)) {
+                // Ici vous pouvez ajouter le code pour envoyer le formulaire
+                document.getElementById('wrapper-loader').style.display = 'flex';
+
+                //Swal.fire({
+                    //icon: 'success',
+                    //title: 'Félicitations !',
+                    //text: 'Votre candidature a été envoyée avec succès.',
+                    //confirmButtonText: 'OK'
+                //});
+            }
+        });
+
+        // Validation en temps réel
+        const inputs = form.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+            input.addEventListener('blur', function () {
+                if (this.checkValidity()) {
+                    this.classList.remove('is-invalid');
+                } else {
+                    this.classList.add('is-invalid');
+                }
+            });
+        });
+
+        const fileInput = document.getElementById('file');
+        const fileWarning = document.getElementById('file-warning');
+        const maxFiles = document.getElementById('file-number').value; // Définir le nombre maximum de fichiers autorisés
+        console.log(maxFiles);
+
+        fileInput.addEventListener('change', function (e) {
+            const filesW = document.getElementById('files-warning');
+            filesW.style.display = 'none';
+            const files = e.target.files;
+            for (let file of files) {
+                if (!file.name.toLowerCase().endsWith('.pdf')) {
+                    filesW.style.display = 'block';
+                    e.target.value = ''; // Réinitialiser le champ
+                    break;
+                }
+            }
+        });
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > maxFiles) {
+                // Afficher un message d'avertissement
+                fileWarning.style.display = 'block';
+                fileWarning.textContent = `Vous ne pouvez sélectionner que ${maxFiles} fichiers maximum.`;
+
+                // Réinitialiser l'input pour que l'utilisateur puisse refaire une sélection
+                fileInput.value = '';
+            } else {
+                fileWarning.style.display = 'none'; // Masquer le message d'avertissement si la sélection est correcte
+            }
+        });
+
+
+        document.getElementById('cv').addEventListener('change', function (e) {
+            const cv_w = document.getElementById('cv-warning');
+            cv_w.style.display = 'none';
+            const files = e.target.files;
+            for (let file of files) {
+                if (!file.name.toLowerCase().endsWith('.pdf')) {
+                    cv_w.style.display = 'block';
+                    e.target.value = ''; // Réinitialiser le champ
+                    break;
+                }
+            }
+        });
+
+
+        const photoInput = document.getElementById('photo');
+        photoInput.addEventListener('change', function (e) {
+            const extension = e.target.files[0].name.split('.').pop().toLowerCase();
+            const chaine = 'jpg, jpeg, png';
+            const cv_w = document.getElementById('photo-warning');
+            cv_w.style.display = 'none';
+            if (!chaine.includes(extension)) {
+                cv_w.style.display = 'block';
+                e.target.value = ''; // Réinitialiser le champ
+            }
+
+        });
+
+        const identityInput = document.getElementById('identity_doc');
+        identityInput.addEventListener('change', function (e) {
+            const cv_w = document.getElementById('identity-warning');
+            const file = e.target.files[0];
+            cv_w.style.display = 'none';
+            if (!file.name.toLowerCase().endsWith('.pdf')) {
+                cv_w.style.display = 'block';
+                e.target.value = ''; // Réinitialiser le champ
+            }
+
+        });
+    </script>
+{% endblock %}

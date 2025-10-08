@@ -1,0 +1,126 @@
+{% load django_htmx %}
+<!DOCTYPE html>
+<html lang="zxx">
+{% load static %}
+<head>
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/animate.min.css' %}">
+
+    <link rel="stylesheet" href="{% static 'fonts/remixicon.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/owl.theme.default.min.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/metismenu.min.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/simplebar.min.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/dropzone.min.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/magnific-popup.min.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/odometer.min.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/meanmenu.min.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/theme-dark.css' %}">
+    {% htmx_script %}
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.15.0/dist/cdn.min.js"></script>
+
+    {% block style %}{% endblock %}
+
+    <title>GERTHE - appels d'offres</title>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.ico' %}">
+</head>
+<body hx-headers='{"x-csrftoken": "{{ csrf_token }}"}'>
+
+<div class="preloader">
+    <div class="d-table">
+        <div class="d-table-cell">
+            <div class="spinner"></div>
+        </div>
+    </div>
+</div>
+
+
+{% include 'header.html' %}
+
+
+{#<div class="inner-banner">#}
+{#    <div class="container">#}
+{#        <div class="inner-title text-center">#}
+{#            <h3>{% block banner %}{% endblock %}</h3>#}
+{#            <ul>#}
+{#                <li>#}
+{#                    <a href="{% url 'core:home' %}">Accueil</a>#}
+{#                </li>#}
+{#                <li>{% block brump %}{% endblock %}</li>#}
+{#            </ul>#}
+{#        </div>#}
+{#    </div>#}
+{#</div>#}
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show mt-5" role="alert" style="z-index: 99999; position: absolute; top: 20px; right: 10px;">
+       {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+{% endif %}
+
+
+{% block content %}
+{% endblock %}
+
+
+{% include 'footer.html' %}
+
+
+<script src="{% static 'js/jquery.min.js' %}"></script>
+
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+
+<script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
+
+<script src="{% static 'js/odometer.min.js' %}"></script>
+
+<script src="{% static 'js/jquery.appear.min.js' %}"></script>
+
+<script src="{% static 'js/meanmenu.min.js' %}"></script>
+
+<script src="{% static 'js/metismenu.min.js' %}"></script>
+
+<script src="{% static 'js/simplebar.min.js' %}"></script>
+
+<script src="{% static 'js/dropzone.min.js' %}"></script>
+
+<script src="{% static 'js/sticky-sidebar.min.js' %}"></script>
+
+<script src="{% static 'js/tweenMax.min.js' %}"></script>
+
+<script src="{% static 'js/owl.carousel.min.js' %}"></script>
+
+<script src="{% static 'js/wow.min.js' %}"></script>
+
+<script src="{% static 'js/jquery.ajaxchimp.min.js' %}"></script>
+
+<script src="{% static 'js/form-validator.min.js' %}"></script>
+
+<script src="{% static 'js/contact-form-script.js' %}"></script>
+
+{% block script %}{% endblock %}
+
+<script src="{% static 'js/custom.js' %}"></script>
+</body>
+
+</html>

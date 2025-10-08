@@ -1,0 +1,14 @@
+{% if send %}
+<div class="row date-inputs-section" id="period-form">
+    <div class="col-md-6 date-input-group">
+        <label class="date-label fw-bold">Date de début <span class="text-danger">*</span></label>
+        <input type="date" class="date-input" id="dateDebut" name="date_start" required>
+    </div>
+    <div class="col-md-6 date-input-group">
+        <label class="date-label fw-bold">Date de fin <span class="text-danger">*</span></label>
+        <input type="date" class="date-input" id="dateFin" name="date_end" required>
+    </div>
+</div>
+{% else %}
+<div id="period-form"></div>
+{% endif %}

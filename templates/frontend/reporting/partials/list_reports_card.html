@@ -1,0 +1,78 @@
+<div class="col-lg-8" id="job-list-content">
+    <div class="job-listing-topper">
+        <div class="row align-items-center">
+            <div class="col-md-12 text-end">
+                <div class="job-listing-title">
+                    <h3 class="text-muted">De {{ reports.start_index }} à {{ reports.end_index }} sur {{ reports.paginator.count }} Rapports</h3>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="row pt-45 find-jobs-area">
+        {% if reports %}
+            {% for report in reports %}
+                <div class="col-lg-12">
+                    <div class="find-jobs-card align-items-center home-job">
+                        <div class="content">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <ul class="content-list">
+                                        <li class="time">{{ report.get_type_display }}</li>
+                                        {% if report.type == report.RH %}
+                                        <li class="freelance">Du : {{ report.date_start|date }}</li>
+                                        <li class="internship">Au : {{ report.date_end|date }}</li>
+                                        {% endif %}
+                                    </ul>
+                                    <h3><a href="{% url 'reporting:detail_report' report.id %}">{{ report.title|title }}</a></h3>
+                                </div>
+                                <div class="col-md-4">
+                                    <p class="text-end">Rapport du {{ report.created|date }}</p>
+                                </div>
+                            </div>
+                            {% if report.tasks.all %}
+                                <ul style="list-style-type: disc">
+                                {% for task in report.tasks.all %}
+                                    {% if forloop.counter < 5 %}
+                                    <li>{{ task.title }}</li>
+                                    {% endif %}
+                                {% endfor %}
+                                </ul>
+                            {% elif report.employee_comments %}
+                                <p>{{ report.employee_comments }}</p>
+                            {% endif %}
+                            <div class="">
+                                <a href="{% url 'reporting:detail_report' report.id %}" class="btn btn-link fs-5 fw-normal">Voir le rapport</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            {% if reports.has_other_pages %}
+                <div class="col-lg-12 col-md-12 text-center" hx-target="#job-list-content" hx-swap="outerHTML show:top" hx-include="#filter-form">
+                    <div class="pagination-area">
+                        {% if reports.has_previous %}
+                            <a hx-get="?page={{ reports.previous_page_number }}" class="prev page-numbers">
+                                <i class="ri-arrow-left-s-line"></i>
+                            </a>
+                            <a hx-get="?page={{ reports.previous_page_number }}"
+                               class="page-numbers">{{ reports.previous_page_number }}</a>
+                        {% endif %}
+                        <span class="page-numbers current" aria-current="page">{{ reports.number }}</span>
+                        {% if reports.has_next %}
+                            <a hx-get="?page={{ reports.next_page_number }}"
+                               class="page-numbers">{{ reports.next_page_number }}</a>
+                            <a hx-get="?page={{ reports.next_page_number }}" class="next page-numbers">
+                                <i class="ri-arrow-right-s-line"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="col-lg-12 col-md-12">
+                <h4 class="text-muted fst-italic fw-normal">Aucun rapport trouve.</h4>
+            </div>
+        {% endif %}
+    </div>
+</div>

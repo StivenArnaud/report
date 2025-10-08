@@ -1,0 +1,34 @@
+<tr>
+    <td>
+        <div class="user-info">
+            <div class="avatar">{{ single_user.first_name|first }}{{ single_user.last_name|first }}</div>
+            <div class="user-details">
+                <h6>{{ single_user.get_full_name }}</h6>
+                <p>{{ single_user.phone }}</p>
+            </div>
+        </div>
+    </td>
+    <td>{{ single_user.email }}</td>
+    <td>{{ single_user.phone }}</td>
+    <td>
+        {% if single_user.role == single_user.EMPLOYEE %}
+            <span class="role-badge role-employee">{{ single_user.get_role_display }}</span>
+        {% elif single_user.role == single_user.RESPONSIBLE %}
+            <span class="role-badge role-responsible">{{ single_user.get_role_display }}</span>
+        {% elif single_user.role == single_user.RH %}
+            <span class="role-badge role-rh">{{ single_user.get_role_display }}</span>
+        {% elif single_user.role == single_user.ADMIN %}
+            <span class="role-badge role-admin">{{ single_user.get_role_display }}</span>
+        {% endif %}
+    </td>
+    <td>{{ single_user.responsible|default_if_none:'—' }}</td>
+    <td>{{ single_user.address|default_if_none:'Non defini' }}</td>
+    <td>
+        <button class="btn btn-sm btn-outline-primary" title="Modifier">
+            <i class="ri ri-edit-2-line"></i>
+        </button>
+        <button class="btn btn-sm btn-outline-danger" title="Supprimer">
+            <i class="ri ri-delete-bin-2-line"></i>
+        </button>
+    </td>
+</tr>

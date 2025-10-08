@@ -1,0 +1,109 @@
+{% extends 'frontend/base.html' %}
+
+{% block content %}
+    <div class="user-area pt-150 pb-70">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-md-6 mx-auto">
+                    <div class="user-all-form">
+                        <div class="contact-form">
+                            <h3>Candidater à l'offre : {{ job.title }}</h3>
+                            <div class="bar"></div>
+                            <form id="" method="post" enctype="multipart/form-data">
+                                {% if message_error %}
+                                    <p class="my-3 p-2 bg-danger-subtle fw-bold text-danger text-center rounded-3">{{ message_error }}</p>
+                                {% endif %}
+                            
+                                {% if message_success %}
+                                    <p class="my-3 p-2 bg-success-subtle fw-bold text-success text-center rounded-3">{{ message_success }}</p>
+                                {% endif %}
+                                <div class="row">
+                                    {% csrf_token %}
+                                    <div class="col-md-6 mt-4">
+                                        <div class="form-group">
+                                            <label for="{{ form.first_name.name }}">{{ form.first_name.label }}
+                                                <span class="text-danger">*</span></label>
+                                            <input type="text" placeholder="Ex: Kouamé" class="form-control" required
+                                                   id="{{ form.first_name.name }}"
+                                                   name="{{ form.first_name.name }}">
+                                        
+                                            {% if form.first_name.errors %}
+                                            <small class="text-danger">{{ form.first_name.errors }}</small>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mt-4">
+                                        <div class="form-group">
+                                            <label for="{{ form.last_name.name }}">{{ form.last_name.label }} <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="text" id="{{ form.last_name.name }}" class="form-control" required
+                                                   name="{{ form.last_name.name }}"
+                                                   placeholder="Ex: Jean-Marc">
+                                            
+                                            {% if form.last_name.errors %}
+                                            <small class="text-danger">{{ form.last_name.errors }}</small>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="{{ form.phone.name }}">{{ form.phone.label }} <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="text" id="{{ form.phone.name }}" class="form-control" required
+                                                   name="{{ form.phone.name }}"
+                                                   placeholder="Ex: 0000000000">
+                                            
+                                            {% if form.phone.errors %}
+                                            <small class="text-danger">{{ form.phone.errors }}</small>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="{{ form.study_level.name }}">{{ form.study_level.label }} <span
+                                                    class="text-danger">*</span></label>
+                                            <select class="form-control" required
+                                                   name="{{ form.study_level.name }}"
+                                                     id="{{ form.study_level.name }}">
+                                                <option>Sélectionnez</option>
+                                                {% for key, text in form.study_level.field.choices %}
+                                                <option value="{{ key }}">{{ text }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            
+                                            {% if form.study_level.errors %}
+                                            <small class="text-danger">{{ form.study_level.errors }}</small>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="{{ form.year_of_experience.name }}">{{ form.year_of_experience.label }}
+                                                <span class="text-danger">*</span></label>
+                                            <select class="form-control" id="{{ form.year_of_experience.name }}"
+                                                    name="{{ form.year_of_experience.name }}">
+                                                <option>Sélectionnez</option>
+                                                {% for key, text in form.year_of_experience.field.choices %}
+                                                <option value="{{ key }}">{{ text }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            
+                                            {% if form.year_of_experience.errors %}
+                                            <small class="text-danger">{{ form.year_of_experience.errors }}</small>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 col-md-12 mt-4 text-end">
+                                        <button type="submit" class="default-btn w-25">
+                                            Envoyer
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

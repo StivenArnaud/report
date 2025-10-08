@@ -1,0 +1,122 @@
+{% extends 'frontend/base.html' %}
+
+{% block style %}
+    <style>
+        .top-banner {
+            background: linear-gradient(90deg, #fdfafa 0%, #f2f4f4 100%);
+            color: black;
+            padding: 0.8rem;
+            text-align: center;
+            position: relative;
+            animation: slideDown 0.5s ease;
+        }
+
+        .close-banner {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: black;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .close-banner:hover {
+            transform: translateY(-50%) rotate(90deg);
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    {% load static %}
+    <div class="job-listing-area pt-100 pb-50 bg-color">
+        <div class="top-banner">
+            <span>Créer et actualiser profil et trouver les meilleures opportunités</span>
+            <button class="close-banner" onclick="this.parentElement.style.display='none'">×</button>
+        </div>
+        <div class="container py-5">
+            <div class="job-listing-top">
+                <div class="row align-items-center">
+                    <div class="col-lg-12">
+                        <div class="job-listing-form">
+                            <h2 class="text-white pb-10">GERTHE REPORT</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="browse-jobs-area-two pt-5 pb-50" style="background: #f1f1f1">
+        <div class="container justify-content-center align-items-center">
+            <div class="row">
+                <div class="col-lg-4 col-md-4 mx-0">
+                    <div class="pricing-card">
+                        <div class="pricing-title">
+                            <h2>Rapport Quotidien</h2>
+                        </div>
+                        <p class="mt-3">Bénéficiez de flexibilité avec nos rapports quotidiens adaptés.</p>
+                        <div class="price-btn-area mt-5">
+                            <a href="" class="price-btn">Rapport Quotidien</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4 mx-0">
+                    <div class="pricing-card">
+                        <div class="pricing-title">
+                            <h2>Rapport Hebdomadaire</h2>
+                        </div>
+                        <p class="mt-3">Contribuez à des projets clés avec une mission contractuelle.</p>
+                        <div class="price-btn-area mt-5">
+                            <a href="" class="price-btn">Rapport Hebdomadaire</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4 mx-0">
+                    <div class="pricing-card">
+                        <div class="pricing-title">
+                            <h2>Justificatif des Retards et Absences</h2>
+                        </div>
+                        <p class="mt-3">Rejoignez-nous pour une carrière durable et enrichissante.</p>
+                        <div class="price-btn-area mt-5">
+                            <a href="" class="price-btn">Justificatifs des retards et absences</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="blog-area pt-50">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-3 mx-auto">
+                    <div class="section-title text-center">
+                        <h2 style="font-size: 28px">CALENDRIER</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="row pt-45 justify-content-center py-5">
+
+            </div>
+        </div>
+    </div>
+    <div class="browse-jobs-area-two pt-5" style="background: #1A8100;">
+        <div class="container justify-content-center align-items-center">
+            <div class="row">
+                <div class="section-title">
+                    <h2 style="color: #f1f1f1; font-weight: 300">Construisons l'avenir ensemble</h2>
+                </div>
+                <p class="mt-4" style="color: #f1f1f1; font-size: 15px">Notre mission au sein du Groupe Gerthe est de permettre au plus grand nombre de personnes,
+                    possédant des compétences clés ou souhaitant les développer,
+                    de trouver des opportunités qui leur permettront de s’épanouir. Dans un contexte où l’Afrique de
+                    l’Ouest se distingue des autres continents par sa forte croissance démographique, il est
+                    essentiel que chacun ait accès aux opportunités nécessaires pour réaliser son plein potentiel et
+                    contribuer activement au développement de nos communautés.
+                </p>
+                <a href="" class="btn btn-outline-light mt-4 w-auto py-2 mb-5">Opportunités</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,7 @@
+{% if email_exist %}
+    <small id="validate-email" class="text-danger">
+        Vous avez déjà un compte, veuillez-vous connecter pour postuler. <a href="{% url 'recruitment:apply_job' job_id %}">Me connecter</a>
+    </small>
+{% else %}
+<small id="validate-email"></small>
+{% endif %}

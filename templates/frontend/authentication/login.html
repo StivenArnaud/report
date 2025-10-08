@@ -1,0 +1,459 @@
+{% extends 'frontend/base.html' %}
+
+{% block banner %}
+    Connexion
+{% endblock %}
+
+{% block brump %}
+    Connexion
+{% endblock %}
+
+
+{% block style %}
+<style>
+    /* Animation du conteneur principal */
+    .user-all-form {
+        animation: slideInUp 0.6s ease-out;
+    }
+    
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Style moderne des champs de formulaire */
+    .form-group {
+        position: relative;
+        margin-bottom: 30px;
+    }
+    
+    .form-group label {
+        font-weight: 500;
+        margin-bottom: 8px;
+        display: block;
+        transition: color 0.3s ease;
+    }
+    
+    .form-control {
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 12px 45px 12px 15px;
+        font-size: 15px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background-color: #f8f9fa;
+    }
+    
+    .form-control:focus {
+        border-color: #2196f3;
+        background-color: #ffffff;
+        box-shadow: 0 0 0 4px rgba(33, 150, 243, 0.1);
+        transform: translateY(-2px);
+        outline: none;
+    }
+    
+    .form-control:hover:not(:focus) {
+        border-color: #bdbdbd;
+        background-color: #ffffff;
+    }
+    
+    /* Icônes dans les champs */
+    .input-icon {
+        position: absolute;
+        right: 15px;
+        top: 42px;
+        color: #9e9e9e;
+        transition: all 0.3s ease;
+        font-size: 18px;
+        pointer-events: none;
+    }
+    
+    .form-control:focus ~ .input-icon {
+        color: #2196f3;
+        transform: scale(1.1);
+    }
+    
+    /* Animation des labels */
+    .form-group label {
+        animation: fadeInDown 0.5s ease-out;
+        animation-fill-mode: both;
+    }
+    
+    .form-group:nth-child(1) label { animation-delay: 0.1s; }
+    .form-group:nth-child(2) label { animation-delay: 0.2s; }
+    
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Animation des inputs */
+    .form-group {
+        animation: fadeInUp 0.5s ease-out;
+        animation-fill-mode: both;
+    }
+    
+    .col-md-12:nth-child(1) .form-group { animation-delay: 0.2s; }
+    .col-md-12:nth-child(2) .form-group { animation-delay: 0.3s; }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Effet de validation visuelle */
+    .form-control.is-valid {
+        border-color: #4caf50;
+        background-color: #f1f8f4;
+    }
+    
+    .form-control.is-invalid {
+        border-color: #f44336;
+        animation: shake 0.5s;
+    }
+    
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+    
+    /* Style du bouton de mot de passe visible */
+    .password-toggle {
+        position: absolute;
+        right: 15px;
+        top: 42px;
+        background: none;
+        border: none;
+        color: #9e9e9e;
+        cursor: pointer;
+        font-size: 18px;
+        transition: all 0.3s ease;
+        z-index: 10;
+    }
+    
+    .password-toggle:hover {
+        color: #2196f3;
+        transform: scale(1.1);
+    }
+    
+    /* Animation du checkbox */
+    .agree-label {
+        animation: fadeIn 0.6s ease-out 0.4s;
+        animation-fill-mode: both;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+    }
+    
+    input[type="checkbox"]:hover {
+        transform: scale(1.1);
+    }
+    
+    /* Style amélioré du bouton */
+    .default-btn {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        animation: fadeInUp 0.6s ease-out 0.5s;
+        animation-fill-mode: both;
+    }
+    
+    .default-btn::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+    
+    .default-btn:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+    
+    .default-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+    
+    .default-btn:active {
+        transform: translateY(-1px);
+    }
+    
+    /* Animation du message d'erreur */
+    .error-message {
+        animation: slideInDown 0.5s ease-out, shake 0.5s ease-out 0.5s;
+    }
+    
+    @keyframes slideInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Animation du titre */
+    .contact-form h3 {
+        animation: fadeInDown 0.6s ease-out;
+    }
+    
+    .bar {
+        animation: expandWidth 0.8s ease-out 0.2s;
+        animation-fill-mode: both;
+        transform-origin: left;
+    }
+    
+    @keyframes expandWidth {
+        from {
+            width: 0;
+            opacity: 0;
+        }
+        to {
+            width: 100%;
+            opacity: 1;
+        }
+    }
+    
+    /* Loading state pour le bouton */
+    .default-btn.loading {
+        pointer-events: none;
+        opacity: 0.7;
+    }
+    
+    .default-btn.loading::after {
+        content: '';
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        top: 50%;
+        left: 50%;
+        margin-left: -8px;
+        margin-top: -8px;
+        border: 2px solid #ffffff;
+        border-radius: 50%;
+        border-top-color: transparent;
+        animation: spin 0.6s linear infinite;
+    }
+    
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    
+    /* Responsive amélioré */
+    @media (max-width: 768px) {
+        .form-control {
+            font-size: 16px; /* Évite le zoom automatique sur iOS */
+        }
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+    <div class="user-area pt-150 pb-70">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mx-auto">
+                    <div class="user-all-form">
+                        <div class="contact-form">
+                            <h3> Se connecter maintenant</h3>
+                            <hr>
+                            <form id="loginForm" method="post" novalidate>
+                                {% if message %}
+                                <p class="my-3 p-2 bg-danger-subtle fw-bold text-danger text-center rounded-3 error-message">
+                                    <i class="ri-error-warning-line me-2"></i>{{ message }}
+                                </p>
+                                {% endif %}
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="{{ form.email.name }}">
+                                                {{ form.email.label }} <span class="text-danger">*</span>
+                                            </label>
+                                            <input 
+                                                type="email" 
+                                                name="{{ form.email.name }}" 
+                                                id="{{ form.email.name }}" 
+                                                class="form-control" 
+                                                required
+                                                placeholder="exemple@gmail.com"
+                                                autocomplete="email">
+                                            <i class="ri-mail-line input-icon"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="{{ form.password.name }}">
+                                                {{ form.password.label }} <span class="text-danger">*</span>
+                                            </label>
+                                            <input 
+                                                class="form-control" 
+                                                type="password" 
+                                                placeholder="••••••••" 
+                                                name="{{ form.password.name }}" 
+                                                id="{{ form.password.name }}" 
+                                                required
+                                                autocomplete="current-password">
+                                            <button type="button" class="password-toggle" id="togglePassword">
+                                                <i class="ri-eye-off-line"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 form-condition">
+                                        <div class="agree-label">
+                                            <input type="checkbox" id="chb1" required>
+                                            <label for="chb1">
+                                                Je ne suis pas un robot {% comment %}<a class="forget" href="#">Mot de passe oublié ?</a>{% endcomment %}
+                                            </label><br>
+                                            <small id="chech" class="text-danger fs-6 fw-light d-none">* Ce champ est obligatoire</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 col-md-12 text-center mb-3">
+                                        <button type="submit" class="default-btn" id="submitBtn">
+                                            <span>Se connecter</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('loginForm');
+        const emailInput = document.getElementById('{{ form.email.name }}');
+        const passwordInput = document.getElementById('{{ form.password.name }}');
+        const submitBtn = document.getElementById('submitBtn');
+        const togglePassword = document.getElementById('togglePassword');
+        
+        // Validation en temps réel de l'email
+        emailInput.addEventListener('blur', function() {
+            if (this.value.trim() === '') {
+                this.classList.remove('is-valid');
+                this.classList.add('is-invalid');
+            } else if (validateEmail(this.value)) {
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+            } else {
+                this.classList.remove('is-valid');
+                this.classList.add('is-invalid');
+            }
+        });
+        
+        // Validation du mot de passe
+        passwordInput.addEventListener('blur', function() {
+            if (this.value.length >= 4) {
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+            } else if (this.value.length > 0) {
+                this.classList.remove('is-valid');
+                this.classList.add('is-invalid');
+            }
+        });
+        
+        // Retirer les classes de validation lors de la saisie
+        emailInput.addEventListener('input', function() {
+            if (this.classList.contains('is-invalid') || this.classList.contains('is-valid')) {
+                this.classList.remove('is-invalid', 'is-valid');
+            }
+        });
+        
+        passwordInput.addEventListener('input', function() {
+            if (this.classList.contains('is-invalid') || this.classList.contains('is-valid')) {
+                this.classList.remove('is-invalid', 'is-valid');
+            }
+        });
+        
+        // Toggle pour afficher/masquer le mot de passe
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            const icon = this.querySelector('i');
+            if (type === 'password') {
+                icon.classList.remove('ri-eye-line');
+                icon.classList.add('ri-eye-off-line');
+            } else {
+                icon.classList.remove('ri-eye-off-line');
+                icon.classList.add('ri-eye-line');
+            }
+        });
+        
+        // Animation de chargement lors de la soumission
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (form.checkValidity()) {
+                form.submit();
+            }else {
+                document.getElementById('chech').classList.remove('d-none');
+            }
+        });
+        
+        // Fonction de validation d'email
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+        
+        // Animation au focus sur les champs
+        const inputs = document.querySelectorAll('.form-control');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.querySelector('label').style.color = '#2196f3';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.querySelector('label').style.color = '';
+            });
+        });
+        
+        // Auto-focus sur le premier champ vide
+        if (emailInput.value === '') {
+            setTimeout(() => emailInput.focus(), 500);
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,75 @@
+
+{% extends 'frontend/base.html' %}
+
+
+{% block content %}
+    <div class="job-listing-area pb-2 pt-150" style="background: #f1f1f1;">
+        <div class="container">
+            <div class="job-listing-top">
+                <div class="d-flex justify-content-between">
+                    <div class="section-title">
+                        <h2>Mes rapports</h2>
+                    </div>
+                    <div class="browse-btn">
+                        <a href="{% url 'reporting:add_report' %}" class="btn post-btn">
+                            <i class="ri-add-line"></i>
+                            Ajouter un rapport
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="job-listing-area pb-70" style="background: #f1f1f1">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4" hx-target="#job-list-content" hx-swap="outerHTML show:top" hx-include="#filter-form">
+                    <form id="filter-form">
+                        <div class="job-listing-side-bar">
+                            <div class="job-listing-widget mb-1">
+                                <ul class="accordion-widget">
+                                    <li class="accordion-widget-item">
+                                        <a class="accordion-widget-title" href="javascript:void(0)">
+                                            <i class="ri-arrow-down-s-line"></i>
+                                            TYPES DE RAPPORTS
+                                        </a>
+                                        <ul class="accordion-widget-content show">
+                                            {% for key, report_type in report_types %}
+                                                <hr>
+                                                <li>
+                                                    <input id="check-job-{{ key }}" type="checkbox" name="report_type" value="{{ key }}" hx-get="{% url 'reporting:list_reports' %}">
+                                                    <label for="check-job-{{ key }}">{{ report_type }}</label>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="job-listing-widget">
+                                <ul class="accordion-widget">
+                                    <li class="accordion-widget-item">
+                                        <a class="accordion-widget-title" href="javascript:void(0)">
+                                            <i class="ri-arrow-down-s-line"></i>
+                                            OBJECTIFS ET MISSIONS
+                                        </a>
+                                        <ul class="accordion-widget-content show">
+                                            {% for domain in domains %}
+                                                {% if domain.jobs.count > 0 %}
+                                                    <li>
+                                                        <input id="check-{{ domain.name }}" type="checkbox" name="domain" value="{{ domain.id }}" hx-get="{% url 'core:home' %}">
+                                                        <label for="check-{{ domain.name }}">{{ domain.name }} <span class="fl">{{ domain.jobs.count }}</span></label>
+                                                    </li>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                {% include 'frontend/reporting/partials/list_reports_card.html' %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
