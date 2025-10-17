@@ -9,7 +9,7 @@ from authentication.models import User
 class RegisterForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'phone', 'email', 'role', 'responsible')
+        fields = ('first_name', 'last_name', 'phone', 'email', 'role', 'responsible', 'identifier')
 
 class UpdateUserForm(UserChangeForm):
     class Meta:

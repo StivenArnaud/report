@@ -1,0 +1,617 @@
+{% extends 'frontend/base.html' %}
+
+
+{% block style %}
+    <style>
+        .profile-header {
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border: 3px solid #0e173d;
+        }
+
+        .profile-picture-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 1rem;
+        }
+
+        .profile-picture {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 5px solid white;
+            object-fit: cover;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .role-badge {
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-item {
+            padding: 1rem 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .section-title-card {
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid #0e1740;
+        }
+
+        .info-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .info-value {
+            color: #212529;
+            font-size: 1rem;
+        }
+
+        .btn-edit {
+            background: linear-gradient(135deg, #11173e 0%, #2a0153 100%);
+            border: none;
+            color: white;
+            padding: 0.6rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .btn-edit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+
+        .icon-box {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #11173e 0%, #2a0153 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .calendar-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        .calendar-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+        }
+        .nav-btn {
+            background-color: #4dabf7;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .nav-btn:hover {
+            background-color: #339af0;
+        }
+        .calendar-table {
+            width: 100%;
+            table-layout: fixed;
+        }
+        .calendar-table th {
+            text-align: center;
+            background-color: #f1f8ff;
+            padding: 10px;
+            font-weight: 600;
+        }
+        .calendar-table td {
+            text-align: center;
+            padding: 15px 5px;
+            height: 50px;
+            vertical-align: top;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .calendar-table td:hover {
+            background-color: #f1f8ff;
+        }
+        .other-month {
+            color: #adb5bd;
+            background-color: #f8f9fa;
+        }
+        .today {
+            background-color: #e3f2fd;
+            font-weight: bold;
+            border: 2px solid #2196f3;
+            border-radius: 5px;
+        }
+        .day-number {
+            font-size: 1.2rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .events-container {
+            position: absolute;
+            bottom: 5px;
+            left: 0;
+            right: 0;
+            text-align: center;
+        }
+        .year-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .year-selector select {
+            width: 120px;
+        }
+        .selected-date {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f1f8ff;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: 500;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    {% load static %}
+    <div class="company-area pt-100 pb-3" style="background: #f1f1f1;">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-12">
+                    <div class="section-title">
+                        <h2 style="font-size: 28px" class="fw-bolder">Details employe</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="job-details-area pt-5 pb-70">
+        <div class="container">
+            <div class="row p-5">
+                <div class="col-lg-12">
+                    <div class="profile-header">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-12 text-center">
+                                    <div class="profile-picture-container">
+                                        {% if single_user.profile_picture %}
+                                            <img src="{{ single_user.profile_picture.url }}" alt="Photo de profil"
+                                                 class="profile-picture" id="profilePicture">
+                                        {% else %}
+                                            <img src="{% static 'images/user-img/user.png' %}" alt="Photo de profil"
+                                                 class="profile-picture" id="profilePicture">
+                                        {% endif %}
+                                    </div>
+                                    <h2 class="mb-2" id="userName">{{ single_user.get_full_name }}</h2>
+                                    <p class="mb-3" id="userEmail">{{ single_user.email }}</p>
+                                    <span class="role-badge bg-success text-dark"
+                                          id="userRole">{{ single_user.get_role_display }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="container mb-5">
+                        <div class="row">
+                            <!-- Informations personnelles -->
+                            <div class="col-lg-6">
+                                <div class="info-card">
+                                    <h4 class="section-title-card">
+                                        <i class="bi bi-person-fill me-2"></i>Informations Personnelles
+                                    </h4>
+
+                                    <div class="info-item">
+                                        <div class="d-flex align-items-start">
+                                            <div class="icon-box me-3">
+                                                <i class="ri ri-user-2-line"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="info-label">Nom de famille</div>
+                                                <div class="info-value"
+                                                     id="firstName">{{ single_user.first_name }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="info-item">
+                                        <div class="d-flex align-items-start">
+                                            <div class="icon-box me-3">
+                                                <i class="ri ri-user-3-line"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="info-label">Prénom(s)</div>
+                                                <div class="info-value" id="lastName">{{ single_user.last_name }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="info-item">
+                                        <div class="d-flex align-items-start">
+                                            <div class="icon-box me-3">
+                                                <i class="ri ri-phone-fill"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="info-label">Téléphone</div>
+                                                <div class="info-value" id="phone">{{ single_user.phone }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="info-item">
+                                        <div class="d-flex align-items-start">
+                                            <div class="icon-box me-3">
+                                                <i class="ri ri-map-fill"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="info-label">Adresse</div>
+                                                <div class="info-value"
+                                                     id="address">{{ single_user.address|default:'Non defini' }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="info-item">
+                                        <div class="d-flex align-items-start">
+                                            <div class="icon-box me-3">
+                                                <i class="ri ri-id-card-fill"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="info-label">Identifiant (Pointage)</div>
+                                                <div class="info-value"
+                                                     id="identifier">{{ single_user.identifier }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Informations professionnelles -->
+                            <div class="col-lg-6">
+                                <div class="info-card">
+                                    <h4 class="section-title-card">
+                                        <i class="bi bi-briefcase-fill me-2"></i>Informations Professionnelles
+                                    </h4>
+
+                                    <div class="info-item">
+                                        <div class="d-flex align-items-start">
+                                            <div class="icon-box me-3">
+                                                <i class="ri ri-building-line"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="info-label">Entreprise</div>
+                                                <div class="info-value"
+                                                     id="company">{{ single_user.company.name }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="info-item">
+                                        <div class="d-flex align-items-start">
+                                            <div class="icon-box me-3">
+                                                <i class="ri ri-shield-fill"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="info-label">Rôle</div>
+                                                <div class="info-value"
+                                                     id="roleDetail">{{ single_user.get_role_display }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="info-item">
+                                        <div class="d-flex align-items-start">
+                                            <div class="icon-box me-3">
+                                                <i class="ri ri-user-follow-fill"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="info-label">Responsable</div>
+                                                <div class="info-value"
+                                                     id="responsible">{{ single_user.responsible.get_full_name|default:'____' }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="info-item">
+                                        <div class="d-flex align-items-start">
+                                            <div class="icon-box me-3">
+                                                <i class="ri ri-envelope-fill"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="info-label">Email professionnel</div>
+                                                <div class="info-value" id="emailDetail">{{ single_user.email }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Boutons d'action -->
+                                <div class="text-center mt-4">
+                                    <button class="btn btn-edit me-2">
+                                        <i class="bi bi-pencil-square me-2"></i>Modifier le profil
+                                    </button>
+                                    <a href="{% url 'authentication:list_users' %}" class="btn btn-outline-secondary"
+                                       style="border-radius: 50px;">
+                                        <i class="bi bi-arrow-left me-2"></i>Retour
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="job-details-widget-side pr-20">
+                        <div class="calendar-container">
+                            <div class="year-selector">
+                                <label for="year-select" class="form-label fw-bold">Année:</label>
+                                <select class="form-select" id="year-select">
+                                    <!-- Les options seront générées par JavaScript -->
+                                </select>
+                            </div>
+
+                            <div class="calendar-header">
+                                <button class="nav-btn" id="prev-month">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                         class="bi bi-chevron-left" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd"
+                                              d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                                    </svg>
+                                </button>
+                                <h1 class="calendar-title" id="month-year"></h1>
+                                <button class="nav-btn" id="next-month">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                         class="bi bi-chevron-right" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd"
+                                              d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <table class="table table-bordered calendar-table">
+                                <thead>
+                                <tr>
+                                    <th>Lun</th>
+                                    <th>Mar</th>
+                                    <th>Mer</th>
+                                    <th>Jeu</th>
+                                    <th>Ven</th>
+                                    <th>Sam</th>
+                                    <th>Dim</th>
+                                </tr>
+                                </thead>
+                                <tbody id="calendar-body">
+                                <!-- Le calendrier sera généré ici par JavaScript -->
+                                </tbody>
+                            </table>
+
+                            <div class="selected-date" id="selected-date">
+                                Aucune date sélectionnée
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Variables d'état
+            let currentDate = new Date();
+            const today = new Date();
+            let selectedDate = null;
+
+            // Éléments DOM
+            const monthYearElement = document.getElementById('month-year');
+            const calendarBody = document.getElementById('calendar-body');
+            const prevMonthBtn = document.getElementById('prev-month');
+            const nextMonthBtn = document.getElementById('next-month');
+            const yearSelect = document.getElementById('year-select');
+            const selectedDateElement = document.getElementById('selected-date');
+
+            // Initialisation
+            populateYearSelect();
+            updateCalendar();
+
+            // Écouteurs d'événements
+            prevMonthBtn.addEventListener('click', function() {
+                currentDate.setMonth(currentDate.getMonth() - 1);
+                updateCalendar();
+            });
+
+            nextMonthBtn.addEventListener('click', function() {
+                currentDate.setMonth(currentDate.getMonth() + 1);
+                updateCalendar();
+            });
+
+            yearSelect.addEventListener('change', function() {
+                currentDate.setFullYear(parseInt(this.value));
+                updateCalendar();
+            });
+
+            function populateYearSelect() {
+                const currentYear = today.getFullYear();
+                // Ajouter les 10 années précédentes et les 10 années suivantes
+                for (let year = currentYear - 10; year <= currentYear + 10; year++) {
+                    const option = document.createElement('option');
+                    option.value = year;
+                    option.textContent = year;
+                    if (year === currentYear) {
+                        option.selected = true;
+                    }
+                    yearSelect.appendChild(option);
+                }
+            }
+
+            function updateCalendar() {
+                const month = currentDate.getMonth();
+                const year = currentDate.getFullYear();
+
+                // Mettre à jour le sélecteur d'année
+                yearSelect.value = year;
+
+                // Afficher le mois et l'année
+                const monthNames = [
+                    "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
+                    "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
+                ];
+                monthYearElement.textContent = `${monthNames[month]} ${year}`;
+
+                // Générer le calendrier
+                generateCalendar(month, year);
+            }
+
+            function generateCalendar(month, year) {
+                calendarBody.innerHTML = '';
+
+                // Premier jour du mois
+                const firstDay = new Date(year, month, 1);
+                // Dernier jour du mois
+                const lastDay = new Date(year, month + 1, 0);
+                // Premier jour de la semaine (0 = dimanche, 1 = lundi, etc.)
+                let firstDayOfWeek = firstDay.getDay();
+                // Convertir pour que lundi soit le premier jour (0 = lundi)
+                firstDayOfWeek = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
+
+                // Nombre de jours dans le mois
+                const daysInMonth = lastDay.getDate();
+
+                // Calculer le nombre de jours du mois précédent à afficher
+                const prevMonthLastDay = new Date(year, month, 0).getDate();
+
+                let date = 1;
+                let prevMonthDate = prevMonthLastDay - firstDayOfWeek + 1;
+                let nextMonthDate = 1;
+
+                // Créer les 6 semaines du calendrier
+                for (let i = 0; i < 6; i++) {
+                    const row = document.createElement('tr');
+
+                    for (let j = 0; j < 7; j++) {
+                        const cell = document.createElement('td');
+                        let cellDate;
+
+                        // Première semaine - jours du mois précédent
+                        if (i === 0 && j < firstDayOfWeek) {
+                            cellDate = new Date(year, month - 1, prevMonthDate);
+                            cell.innerHTML = `<span class="day-number">${prevMonthDate}</span>`;
+                            cell.classList.add('other-month');
+                            cell.dataset.date = cellDate.toISOString().split('T')[0];
+                            prevMonthDate++;
+                        }
+                        // Jours du mois en cours
+                        else if (date <= daysInMonth) {
+                            cellDate = new Date(year, month, date);
+                            // Vérifier si c'est aujourd'hui
+                            const isToday = date === today.getDate() &&
+                                           month === today.getMonth() &&
+                                           year === today.getFullYear();
+
+                            cell.innerHTML = `<span class="day-number">${date}</span>`;
+                            cell.dataset.date = cellDate.toISOString().split('T')[0];
+
+                            if (isToday) {
+                                cell.classList.add('today');
+                            }
+
+                            // Vérifier si c'est la date sélectionnée
+                            if (selectedDate &&
+                                cellDate.getDate() === selectedDate.getDate() &&
+                                cellDate.getMonth() === selectedDate.getMonth() &&
+                                cellDate.getFullYear() === selectedDate.getFullYear()) {
+                                cell.style.backgroundColor = '#d4edda';
+                            }
+
+
+
+                            // Ajouter un écouteur d'événement pour la sélection
+                            cell.addEventListener('click', function() {
+                                selectDate(cellDate);
+                            });
+
+                            date++;
+                        }
+                        // Jours du mois suivant
+                        else {
+                            cellDate = new Date(year, month + 1, nextMonthDate);
+                            cell.innerHTML = `<span class="day-number">${nextMonthDate}</span>`;
+                            cell.classList.add('other-month');
+                            cell.dataset.date = cellDate.toISOString().split('T')[0];
+                            nextMonthDate++;
+                        }
+
+                        row.appendChild(cell);
+                    }
+
+                    calendarBody.appendChild(row);
+
+                    // Arrêter si nous avons affiché tous les jours du mois
+                    // et que nous sommes dans la dernière semaine
+                    if (date > daysInMonth && i >= 4) {
+                        break;
+                    }
+                }
+            }
+
+            function selectDate(date) {
+                selectedDate = date;
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                selectedDateElement.textContent = `Date sélectionnée: ${date.toLocaleDateString('fr-FR', options)}`;
+                updateCalendar();
+            }
+        });
+    </script>
+{% endblock %}

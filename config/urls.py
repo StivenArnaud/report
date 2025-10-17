@@ -8,6 +8,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('authentication/', include('authentication.urls')),
     path('reporting/', include('reporting.urls')),
+    path('pointing/', include('pointing.urls')),
 ]
 
 if settings.DEBUG:

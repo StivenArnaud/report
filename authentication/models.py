@@ -7,6 +7,7 @@ from django.contrib.auth.hashers import make_password
 
 # Create your models here.
 from authentication.managers import UserManager
+from company.models import Company
 
 class User(AbstractUser):
     RH = 'RH'
@@ -21,6 +22,7 @@ class User(AbstractUser):
         (ADMIN, 'ADMIN'),
     ]
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, verbose_name=_('Entreprise'), related_name='users', blank=True, null=True)
     responsible = models.ForeignKey('self', on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_('Responsable'))
     role = models.CharField(max_length=15, choices=ROLE_CHOICES, default=EMPLOYEE, verbose_name=_('Role'))
     first_name = models.CharField(max_length=150, verbose_name=_('Nom de famille'))
@@ -28,6 +30,7 @@ class User(AbstractUser):
     email = models.EmailField(unique=True, verbose_name=_('Adresse email'))
     phone = models.CharField(max_length=50, verbose_name=_('Telephone'))
     address = models.CharField(max_length=255, verbose_name=_('Adresse'), blank=True, null=True)
+    identifier = models.CharField(max_length=100, verbose_name=_('Identifiant'), blank=True, null=True)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
 
     REQUIRED_FIELDS = ['first_name', 'last_name', 'email', 'phone']

@@ -1,6 +1,6 @@
 import requests
-from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.http import HttpResponse, Http404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.utils.translation import gettext_lazy as _
 from django.contrib import messages
@@ -11,6 +11,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 # Create your views here.
 from authentication.models import User
 from authentication.forms import RegisterForm, LoginForm, UpdateUserForm
+from pointing.models import Presence
 
 def login_view(request):
     msg = _("")
@@ -86,9 +87,20 @@ def user_register(request):
 
 @login_required
 def list_users(request):
-    all_users = User.objects.select_related('responsible').all()
+    all_users = []
+    users = []
+    if request.user.role == User.EMPLOYEE:
+        return redirect('reporting:list_reports')
+
+    if request.user.role == User.RH:
+        users = User.objects.select_related('responsible').all()
+
+    if request.user.role == User.RESPONSIBLE:
+        users = User.objects.select_related('responsible').filter(responsible=request.user)
+
     responsible_users = User.objects.filter(role=User.RESPONSIBLE)
-    paginator = Paginator(all_users, 10)
+
+    paginator = Paginator(users, 10)
     page = request.GET.get('page')
 
     try:
@@ -100,13 +112,31 @@ def list_users(request):
 
     context = {
         'all_users': all_users,
-        'employee_count': User.objects.filter(role=User.EMPLOYEE).count(),
-        'rh_count': User.objects.filter(role=User.RH).count(),
-        'responsible_count': User.objects.filter(role=User.RESPONSIBLE).count(),
+        'employee_count': users.filter(role=User.EMPLOYEE).count(),
+        'rh_count': users.filter(role=User.RH).count(),
+        'responsible_count': users.filter(role=User.RESPONSIBLE).count(),
         'responsible_users': responsible_users,
     }
 
     return render(request, 'frontend/authentication/list_users.html', context)
+
+
+
+@login_required
+def user_detail(request, user_id):
+    try:
+        single_user = User.objects.select_related('company', 'responsible').get(pk=user_id, company=request.user.company)
+        presences = Presence.objects.prefetch_related('items').filter(user=single_user)
+    except:
+        raise Http404('User does not exist')
+
+    context = {
+        'single_user': single_user,
+        'presences': presences,
+    }
+
+    return render(request, 'frontend/authentication/user_detail.html', context)
+
 
 
 

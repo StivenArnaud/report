@@ -6,8 +6,8 @@
             <div class="mobile-responsive-menu">
                 <div class="logo">
                     <a href="{% url 'core:index' %}">
-                        <img src="{% static 'images/logo-blanc.png' %}" width="150" class="logo-one" alt="Logo">
-                        <img src="{% static 'images/logo-blanc.png' %}" width="150" class="logo-two" alt="Logo">
+                        <img src="{% static 'images/logo-blanc.png' %}" width="90" class="logo-one rounded-3" alt="Logo">
+                        <img src="{% static 'images/logo-blanc.png' %}" width="90" class="logo-two rounded-3" alt="Logo">
                     </a>
                 </div>
             </div>
@@ -18,8 +18,8 @@
         <div class="container-fluid">
             <nav class="navbar navbar-expand-md navbar-light ">
                 <a class="navbar-brand" href="{% url 'core:index' %}">
-                    <img src="{% static 'images/logo-blanc.png' %}" width="150" class="logo-one" alt="Logo">
-                    <img src="{% static 'images/logo-blanc.png' %}" width="150" class="logo-two" alt="Logo">
+                    <img src="{% static 'images/logo.jpeg' %}" width="90" class="logo-one rounded-3" alt="Logo">
+                    <img src="{% static 'images/logo.jpeg' %}" width="90" class="logo-two rounded-3" alt="Logo">
                 </a>
                 <div class="collapse navbar-collapse mean-menu" id="navbarSupportedContent">
                     <ul class="navbar-nav">
@@ -32,6 +32,14 @@
                         <li class="nav-item">
                             <a href="{% url 'authentication:list_users' %}" class="nav-link {% active_link 'authentication:list_users' strict=True %}">
                                 Employes
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% if user.role != user.EMPLOYEE and user.role != user.RESPONSIBLE %}
+                        <li class="nav-item">
+                            <a href="{% url 'pointing:add_presence' %}" class="nav-link {% active_link 'pointing:add_presence' strict=True %}">
+                                Pointage
                             </a>
                         </li>
                         {% endif %}
@@ -78,22 +86,21 @@
                 <div class="side-nav-inner">
                     <div class="side-nav justify-content-center align-items-center">
                         {% if request.user.is_authenticated %}
-                        <div class="side-nav-item text-center">
-                            <a 
-                                    {% if request.user.role == request.user.ADMIN %}
-                                        href="{% url 'core:dashboard' %}"
-                                    {% elif request.user.role == request.user.COMPANY %}
-                                        href="{% url 'core:dashboard_company' %}"
-                                    {% elif request.user.role == request.user.FREELANCER %}
-                                        href="{% url 'core:dashboard_freelancer' %}"
-                                    {% endif %}
-                                    class="default-btn two border-radius-5">Mon Compte<i
-                                        class="ri-user-3-line"></i></a>
+                        <div class="side-nav-item text-center dropdown">
+                            <a
+                                    href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                                    class="btn btn-light border-radius-5 dropdown-toggle">Mon Compte<i
+                                    class="ri-user-3-line"></i></a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'authentication:profile' %}"><i class="ri ri-home-gear-line"></i> Parametres</a></li>
+                                <li><a class="dropdown-item" href="{% url 'authentication:change_password' %}"><i class="ri ri-lock-line"></i> Mot de passe</a></li>
+                                <li><a class="dropdown-item" href="{% url 'authentication:logout' %}"><i class="ri ri-logout-box-line"></i> Se deconnecter</a></li>
+                            </ul>
                         </div>
                         {% else %}
                         <div class="side-nav-item">
-                            <a href="#" class="default-btn two border-radius-5">Se connecter <i
-                                    class="ri-user-3-line"></i></a>
+                            <a href="{% url 'authentication:login' %}" class="default-btn two border-radius-5">Se connecter <i
+                                    class="ri-login-box-line"></i></a>
                         </div>
                         {% endif %}
                     </div>
