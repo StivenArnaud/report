@@ -31,7 +31,7 @@ class Presence(models.Model):
 
 class PrecenceItem(models.Model):
     IN = "ENTREE"
-    OUT = " SORTIE"
+    OUT = "SORTIE"
     STATE_CHOICES = (
         (IN, "Entree"),
         (OUT, "Sortie"),

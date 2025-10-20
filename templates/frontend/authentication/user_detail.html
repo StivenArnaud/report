@@ -197,6 +197,36 @@
             text-align: center;
             font-weight: 500;
         }
+
+        .rapport-card {
+          border: none;
+          border-radius: 20px;
+          box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+          transition: all 0.3s ease-in-out;
+        }
+        .rapport-card:hover {
+          transform: scale(1.03);
+          box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        }
+        .rapport-header {
+          background: #3b82f6;
+          color: white;
+          border-radius: 20px 20px 0 0;
+          padding: 10px 20px;
+          font-weight: 600;
+          letter-spacing: 0.5px;
+        }
+        .rapport-body {
+          background: white;
+          padding: 20px;
+          border-radius: 0 0 20px 20px;
+        }
+        .card-info-item {
+          display: flex;
+          justify-content: space-between;
+          padding: 8px 0;
+          border-bottom: 1px solid #f0f0f0;
+        }
     </style>
 {% endblock %}
 
@@ -388,8 +418,8 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="col-lg-6">
+                <hr>
+                <div class="col-md-6">
                     <div class="job-details-widget-side pr-20">
                         <div class="calendar-container">
                             <div class="year-selector">
@@ -438,6 +468,12 @@
                                 Aucune date sélectionnée
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div id="zoneResultat">
+                        {% include 'frontend/authentication/partials/summary_user.html' %}
                     </div>
                 </div>
             </div>
@@ -607,7 +643,12 @@
             }
 
             function selectDate(date) {
+                const url = "{% url 'authentication:user_detail' single_user.id %}"
                 selectedDate = date;
+                htmx.ajax('GET', `${url}?date=${date.toISOString().split('T')[0]}`, {
+                    target: '#zoneResultat',
+                    swap: 'innerHTML'
+                });
                 const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
                 selectedDateElement.textContent = `Date sélectionnée: ${date.toLocaleDateString('fr-FR', options)}`;
                 updateCalendar();

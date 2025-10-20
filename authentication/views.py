@@ -1,6 +1,8 @@
 import requests
-from django.http import HttpResponse, Http404
-from django.shortcuts import render, redirect, get_object_or_404
+from datetime import datetime
+from django.utils import timezone
+from django.http import Http404
+from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.utils.translation import gettext_lazy as _
 from django.contrib import messages
@@ -11,7 +13,8 @@ from django.contrib.auth.forms import PasswordChangeForm
 # Create your views here.
 from authentication.models import User
 from authentication.forms import RegisterForm, LoginForm, UpdateUserForm
-from pointing.models import Presence
+from pointing.models import Presence, PrecenceItem
+from reporting.models import Report
 
 def login_view(request):
     msg = _("")
@@ -92,7 +95,7 @@ def list_users(request):
     if request.user.role == User.EMPLOYEE:
         return redirect('reporting:list_reports')
 
-    if request.user.role == User.RH:
+    if request.user.role == User.RH or request.user.role == User.ADMIN:
         users = User.objects.select_related('responsible').all()
 
     if request.user.role == User.RESPONSIBLE:
@@ -125,7 +128,34 @@ def list_users(request):
 @login_required
 def user_detail(request, user_id):
     try:
-        single_user = User.objects.select_related('company', 'responsible').get(pk=user_id, company=request.user.company)
+        single_user = User.objects.select_related('company', 'responsible').get(pk=user_id,
+                                                                                company=request.user.company)
+    except:
+        raise Http404('User does not exist')
+
+    if 'HX-Request' in request.headers:
+        calendar_date = request.GET.get('date')
+        report = None
+        presence_items = []
+        date_aware = None
+        if calendar_date:
+            date_naive = datetime.strptime(calendar_date, "%Y-%m-%d")
+            date_aware = timezone.make_aware(date_naive)
+            presence_items = PrecenceItem.objects.filter(date=date_aware, user__id=user_id)
+            try:
+                report = Report.objects.get(user__id=user_id, published=True, created__date=calendar_date)
+            except:
+                pass
+        context = {
+            'report': report,
+            'presence_items': presence_items,
+            'calendar_date': date_aware,
+            'single_user': single_user,
+        }
+
+        return render(request, 'frontend/authentication/partials/summary_user.html', context)
+
+    try:
         presences = Presence.objects.prefetch_related('items').filter(user=single_user)
     except:
         raise Http404('User does not exist')

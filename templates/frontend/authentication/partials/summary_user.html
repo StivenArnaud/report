@@ -1,0 +1,35 @@
+{% if presence_items or report %}
+<div class="card rapport-card">
+    <div class="rapport-header">
+        {{ single_user.get_full_name }} - {{ calendar_date|date }}
+    </div>
+    <div class="rapport-body">
+        {% for item in presence_items  %}
+
+            {% if item.state == item.IN %}
+            <div class="card-info-item"><span>🕗 Heure d’entrée :</span><strong>
+                {{ item.times|default:'Entrée manquante' }}
+            </strong></div>
+
+            {% elif item.state == item.OUT %}
+            <div class="card-info-item"><span>🕔 Heure de sortie :</span><strong>
+                {{ item.times|default:'Sortie manquante' }}
+            </strong></div>
+            {% endif %}
+
+        {% endfor %}
+
+        {% if report %}
+        <div class="info-item"><span>⚡ Rapport :</span><span>
+            <a href="{% url 'reporting:detail_report' report.id %}" class="btn btn-outline-success" target="_blank">Voir le rapport</a>
+        </span></div>
+        {% else %}
+            <div class="info-item"><span>⚡ Rapport :</span><span>Pas de rapport</span></div>
+        {% endif %}
+    </div>
+</div>
+{% else %}
+    <p class="p-5 bg-secondary-subtle text-dark-emphasis fst-italic fs-5 fw-normal border rounded-3">
+        Aucune donnees trouvees ! Veuillez selectionner une autre date
+    </p>
+{% endif %}

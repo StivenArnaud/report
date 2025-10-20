@@ -2352,7 +2352,7 @@ img {
     text-align: center;
     position: relative;
     overflow: hidden;
-    font-size: 13px;
+    font-size: 15px;
     z-index: 1;
     /*background-color: #d5f3e7;*/
     border: 1px solid var(--mainColor);
