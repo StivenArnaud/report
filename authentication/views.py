@@ -55,7 +55,6 @@ def login_view(request):
 def user_register(request):
     message = _("")
     if request.method == 'POST':
-        print(request.POST)
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = User.objects.create_user(
@@ -66,6 +65,7 @@ def user_register(request):
                 username=form.cleaned_data['email'],
                 password=form.cleaned_data['phone'],
                 role=User.EMPLOYEE,
+                company=request.user.company,
             )
             user.username = user.email
             user.set_password(form.cleaned_data['phone'])
