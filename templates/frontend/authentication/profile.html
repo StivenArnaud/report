@@ -3,72 +3,245 @@
 
 {% block style %}
     <style>
-        .submit-btn {
-            background-color: #28a745;
-            color: white;
-            padding: 10px 40px;
-            border: none;
-            border-radius: 5px;
-            font-size: 1.2rem;
-            font-weight: 500;
-            float: right;
-            cursor: pointer;
-            transition: background-color 0.3s;
+        .tabs-container {
+            width: 100%;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
         }
 
-        .submit-btn:hover {
-            background-color: #218838;
-        }
-
-        .date-inputs-section {
-            display: flex;
-            gap: 20px;
+        .nav-tabs {
+            border-bottom: 2px solid #e0e0e0;
             margin-bottom: 30px;
         }
 
-        .date-input-group {
-            flex: 1;
+        .nav-tabs .nav-link {
+            border: none;
+            color: #666;
+            font-weight: 600;
+            padding: 15px 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            margin-right: 10px;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .nav-tabs .nav-link:hover {
+            color: #24024a;
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-tabs .nav-link.active {
+            color: #24024a;
+            background: transparent;
+        }
+
+        .nav-tabs .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #081559, #24024a);
+            border-radius: 3px 3px 0 0;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                width: 0;
+                left: 50%;
+            }
+            to {
+                width: 100%;
+                left: 0;
+            }
+        }
+
+        .tab-content {
+            position: relative;
+            min-height: 300px;
+        }
+
+        .tab-pane {
+            animation: fadeInUp 0.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tab-icon {
+            font-size: 50px;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #081559, #24024a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .content-card {
+            border-radius: 15px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .content-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 10px 0;
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            animation: slideInLeft 0.5s ease forwards;
+            opacity: 0;
         }
 
-        .date-label {
-            font-size: 1rem;
+        .feature-list li:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .feature-list li:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .feature-list li:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .feature-list li:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .feature-list i {
+            color: #24024a;
+            margin-right: 15px;
+            font-size: 20px;
+        }
+
+        h1 {
+            text-align: center;
             color: #333;
-            font-weight: 500;
-            margin-bottom: 8px;
+            margin-bottom: 40px;
+            font-weight: 700;
         }
 
-        .date-input {
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
-            padding: 12px 15px;
-            border-radius: 5px;
-            font-size: 1rem;
+        @media (max-width: 768px) {
+            .tabs-container {
+                padding: 20px;
+            }
+
+            .nav-tabs .nav-link {
+                padding: 12px 15px;
+                font-size: 14px;
+                margin-right: 5px;
+            }
+
+            .tab-icon {
+                font-size: 40px;
+            }
+
+            .content-card {
+                padding: 20px;
+            }
+        }
+
+        .info-card {
+            background: white;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-item {
+            padding: 1rem 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .section-title-card {
+            font-weight: 700;
             color: #333;
-            outline: none;
-            transition: border-color 0.3s;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid #0e1740;
         }
 
-        .date-input:focus {
-            border-color: #6c5ce7;
+        .info-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
         }
 
-
-        .select-input option {
-            padding: 10px;
+        .info-value {
+            color: #212529;
+            font-size: 1rem;
         }
 
+        .icon-box {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #11173e 0%, #2a0153 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
     </style>
 {% endblock %}
 
 {% block content %}
+    {% load static %}
     <div class="company-area pt-100 pb-3" style="background: #f1f1f1;">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-12">
                     <div class="section-title">
-                        <h2 style="font-size: 28px" class="fw-bolder">Changer de mot de passe</h2>
+                        <h2 style="font-size: 28px" class="fw-bolder">Informations sur l'employe</h2>
                     </div>
                 </div>
             </div>
@@ -78,54 +251,217 @@
     <div class="job-details-area pt-5 pb-70">
         <div class="container">
             <div class="row p-5">
-                <div class="col-lg-9">
-                    <form method="post" enctype="multipart/form-data" id="myForm">
-                        {% csrf_token %}
+                <div class="col-md-12">
+                    <div class="tabs-container">
+                        <h1>Profil de l'employe</h1>
 
-                        <div class="date-input-group mb-3">
-                            <label class="date-label fw-bold">Nom d'utilisation</label>
-                            <input type="text" class="date-input" id="dateDebut" value="{{ user.username }}" disabled>
-                        </div>
+                        <ul class="nav nav-tabs" id="myTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="home-tab" data-bs-toggle="tab"
+                                        data-bs-target="#home" type="button" role="tab">
+                                    <i class="ri ri-user-fill"></i>Accueil
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile"
+                                        type="button" role="tab">
+                                    <i class="ri ri-file-2-fill me-2"></i>CV
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="services-tab" data-bs-toggle="tab"
+                                        data-bs-target="#services" type="button" role="tab">
+                                    <i class="ri ri-file-chart-2-fill me-2"></i>CNI
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact"
+                                        type="button" role="tab">
+                                    <i class="ri ri-file-3-fill me-2"></i>Fiche de poste
+                                </button>
+                            </li>
+                        </ul>
 
-                        <div class="row date-inputs-section" id="period-form">
-                            <div class="col-md-6 date-input-group">
-                                <label class="date-label fw-bold">{{ form.first_name.label }} <span class="text-danger">*</span></label>
-                                <input type="text" class="date-input" value="{{ form.first_name.value|default_if_none:'' }}" id="{{ form.first_name.name }}" name="{{ form.first_name.name }}" required>
+                        <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade show active" id="home" role="tabpanel">
+                                <div class="content-card">
+                                    <div class="info-card">
+                                        <h4 class="section-title-card">
+                                            <i class="bi bi-person-fill me-2"></i>Informations Personnelles
+                                        </h4>
+
+                                        <div class="text-end">
+                                            {% if single_user.profile_picture %}
+                                            <img src="{{ single_user.profile_picture.url }}" alt="Profile Picture" width="100" height="100" class="rounded-circle">
+                                            {% else %}
+                                            <img src="{% static 'images/user-img/user.png' %}" alt="Default Profile Picture" width="100" height="100" class="rounded-circle">
+                                            {% endif %}
+                                        </div>
+
+                                        <div class="info-item">
+                                            <div class="d-flex align-items-start">
+                                                <div class="icon-box me-3">
+                                                    <i class="ri ri-user-2-line"></i>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <div class="info-label">Nom de famille</div>
+                                                    <div class="info-value"
+                                                         id="firstName">{{ single_user.first_name }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="info-item">
+                                            <div class="d-flex align-items-start">
+                                                <div class="icon-box me-3">
+                                                    <i class="ri ri-user-3-line"></i>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <div class="info-label">Prénom(s)</div>
+                                                    <div class="info-value"
+                                                         id="lastName">{{ single_user.last_name }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="info-item">
+                                            <div class="d-flex align-items-start">
+                                                <div class="icon-box me-3">
+                                                    <i class="ri ri-calendar-2-fill"></i>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <div class="info-label">Date de naissance</div>
+                                                    <div class="info-value"
+                                                         id="firstName">{{ profile.birth_date|default:'Non definie' }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="info-item">
+                                            <div class="d-flex align-items-start">
+                                                <div class="icon-box me-3">
+                                                    <i class="ri ri-genderless-fill"></i>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <div class="info-label">Genre</div>
+                                                    <div class="info-value"
+                                                         id="lastName">{{ profile.get_gender_display|default:'Non defini' }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="info-item">
+                                            <div class="d-flex align-items-start">
+                                                <div class="icon-box me-3">
+                                                    <i class="ri ri-phone-fill"></i>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <div class="info-label">Téléphone</div>
+                                                    <div class="info-value" id="phone">{{ single_user.phone }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="info-item">
+                                            <div class="d-flex align-items-start">
+                                                <div class="icon-box me-3">
+                                                    <i class="ri ri-map-fill"></i>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <div class="info-label">Adresse</div>
+                                                    <div class="info-value"
+                                                         id="address">{{ single_user.address|default:'Non defini' }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="info-item">
+                                            <div class="d-flex align-items-start">
+                                                <div class="icon-box me-3">
+                                                    <i class="ri ri-id-card-fill"></i>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <div class="info-label">Poste Occupe</div>
+                                                    <div class="info-value"
+                                                         id="firstName">{{ profile.job_title|default:'Non defini' }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="info-item">
+                                            <div class="d-flex align-items-start">
+                                                <div class="icon-box me-3">
+                                                    <i class="ri ri-money-cny-box-fill"></i>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <div class="info-label">Salaire</div>
+                                                    <div class="info-value"
+                                                         id="lastName">{{ profile.salary|default:'Non defini' }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="info-item">
+                                            <div class="d-flex align-items-start">
+                                                <div class="icon-box me-3">
+                                                    <i class="ri ri-id-card-fill"></i>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <div class="info-label">Identifiant (Pointage)</div>
+                                                    <div class="info-value"
+                                                         id="identifier">{{ single_user.identifier }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-md-6 date-input-group">
-                                <label class="date-label fw-bold">{{ form.last_name.label }} <span class="text-danger">*</span></label>
-                                <input type="text" class="date-input" value="{{ form.last_name.value|default_if_none:'' }}" id="{{ form.last_name.name }}" name="{{ form.last_name.name }}" required>
+
+                            <div class="tab-pane fade" id="profile" role="tabpanel">
+                                <div class="content-card p-4">
+                                    {% if profile.cv %}
+                                        <h4 class="section-title-card">
+                                            <i class="ri ri-file-2-fill me-2"></i>CV de {{ single_user.get_full_name }}
+                                        </h4>
+                                        <iframe id="embedded_pdf" src="{{ profile.cv.url }}" type="application/pdf" width="100%" height="1000" style="border-bottom: 5px solid #444444;"></iframe>
+                                    {% else %}
+                                        <div class="text-center">
+                                            <h3 class="fst-italic text-muted fw-normal">Aucun CV disponible</h3>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" id="services" role="tabpanel">
+                                <div class="content-card p-4">
+                                    {% if profile.cni %}
+                                        <h4 class="section-title-card">
+                                            <i class="ri ri-file-chart-2-fill me-2"></i>CNI de {{ single_user.get_full_name }}
+                                        </h4>
+                                        <iframe id="embedded_pdf" src="{{ profile.cni.url }}" type="application/pdf" width="100%" height="1000" style="border-bottom: 5px solid #444444;"></iframe>
+                                    {% else %}
+                                        <div class="text-center">
+                                            <h3 class="fst-italic text-muted fw-normal">Aucune CNI disponible</h3>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" id="contact" role="tabpanel">
+                                <div class="content-card p-4">
+                                    {% if profile.job_file %}
+                                        <h4 class="section-title-card">
+                                            <i class="ri ri-file-3-fill me-2"></i>Fiche de poste de {{ single_user.get_full_name }}
+                                        </h4>
+                                        <iframe id="embedded_pdf" src="{{ profile.job_file.url }}" type="application/pdf" width="100%" height="1000" style="border-bottom: 5px solid #444444;"></iframe>
+                                    {% else %}
+                                        <div class="text-center">
+                                            <h3 class="fst-italic text-muted fw-normal">Aucune fiche de poste disponible</h3>
+                                        </div>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
-
-                        <div class="date-input-group mb-3">
-                            <label class="date-label fw-bold">Responsable <span class="text-danger">*</span></label>
-                            <input type="text" class="date-input" value="{{ user.responsible.get_full_name|default:'___' }}" disabled>
-                        </div>
-
-                        <div class="date-input-group mb-3">
-                            <label class="date-label fw-bold">{{ form.phone.label }} <span class="text-danger">*</span></label>
-                            <input type="text" class="date-input" value="{{ form.phone.value|default_if_none:'' }}" id="{{ form.phone.name }}" name="{{ form.phone.name }}" required>
-                        </div>
-
-                        <div class="date-input-group mb-3">
-                            <label class="date-label fw-bold">{{ form.email.label }} <span class="text-danger">*</span></label>
-                            <input type="email" class="date-input" value="{{ form.email.value }}" id="{{ form.email.name }}" name="{{ form.email.name }}" required>
-                        </div>
-
-                        <div class="date-input-group mb-3">
-                            <label class="date-label fw-bold">{{ form.address.label }} <span class="text-danger">*</span></label>
-                            <input type="text" class="date-input" value="{{ form.address.value|default_if_none:'' }}" id="{{ form.address.name }}" name="{{ form.address.name }}" required>
-                        </div>
-
-                        <button class="submit-btn">Enregistrer</button>
-                        <div style="clear: both;"></div>
-                    </form>
-                </div>
-
-                <div class="col-lg-3">
-                    <div class="job-details-widget-side pr-20">
-
                     </div>
                 </div>
             </div>
@@ -135,12 +471,5 @@
 {% endblock %}
 
 {% block script %}
-    <script>
-        document.getElementById("myForm").addEventListener("keydown", function(event) {
-          if (event.key === "Enter") {
-            event.preventDefault(); // Empêche l'envoi
-          }
-        });
 
-    </script>
 {% endblock %}

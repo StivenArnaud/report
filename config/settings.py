@@ -130,6 +130,9 @@ AUTH_USER_MODEL = 'authentication.User'
 LOGIN_URL = '/authentication/login/'
 LOGOUT_REDIRECT_URL = '/'
 
+X_FRAME_OPTIONS = "SAMEORIGIN"
+
+
 CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=[])
 
 CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[])

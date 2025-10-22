@@ -11,8 +11,8 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.forms import PasswordChangeForm
 
 # Create your views here.
-from authentication.models import User
-from authentication.forms import RegisterForm, LoginForm, UpdateUserForm
+from authentication.models import User, Profile
+from authentication.forms import RegisterForm, LoginForm, UpdateUserForm, UpdateProfileForm
 from pointing.models import Presence, PrecenceItem
 from reporting.models import Report
 
@@ -198,20 +198,49 @@ def change_password(request):
 
 
 @login_required
-def profile(request):
+def user_settings(request):
+    try:
+        old_profile = Profile.objects.get(user=request.user, company=request.user.company)
+    except:
+        old_profile = None
+
     if request.method == 'POST':
-        form = UpdateUserForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
+        form = UpdateUserForm(request.POST, request.FILES, instance=request.user)
+        profile_form = UpdateProfileForm(request.POST, request.FILES, instance=old_profile or None)
+        if form.is_valid() and profile_form.is_valid():
+            user = form.save()
+
+            profile = profile_form.save(commit=False)
+            profile.user = user
+            profile.company = user.company
+            profile.save()
+
             messages.success(request, _("Vos informations ont ete modifie avec succes !"))
             return redirect('reporting:list_reports')
         else:
             messages.error(request, _("Veuillez remplir tous les champs !"))
     else:
         form = UpdateUserForm(instance=request.user)
+        profile_form = UpdateProfileForm(instance=old_profile or None)
 
     context = {
         'form': form,
+        'profile_form': profile_form,
+    }
+
+    return render(request, 'frontend/authentication/user_settings.html', context)
+
+@login_required
+def profile_view(request, user_id):
+    try:
+        user = User.objects.get(pk=user_id, company=request.user.company)
+        profile = Profile.objects.get(user=user, company=request.user.company)
+    except:
+        profile = None
+
+    context = {
+        'single_user': user,
+        'profile': profile,
     }
 
     return render(request, 'frontend/authentication/profile.html', context)

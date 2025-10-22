@@ -57,7 +57,8 @@
                                         class="btn btn-light border-radius-5 dropdown-toggle">Mon Compte<i
                                         class="ri-user-3-line"></i></a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="{% url 'authentication:profile' %}"><i class="ri ri-home-gear-line"></i> Parametres</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'authentication:profile' user.id %}"><i class="ri ri-user-fill"></i>Mon Profil</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'authentication:user_settings' %}"><i class="ri ri-home-gear-line"></i> Parametres</a></li>
                                     <li><a class="dropdown-item" href="{% url 'authentication:change_password' %}"><i class="ri ri-lock-line"></i> Mot de passe</a></li>
                                     <li><a class="dropdown-item" href="{% url 'authentication:logout' %}"><i class="ri ri-logout-box-line"></i> Se deconnecter</a></li>
                                 </ul>
@@ -92,7 +93,8 @@
                                     class="btn btn-light border-radius-5 dropdown-toggle">Mon Compte<i
                                     class="ri-user-3-line"></i></a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{% url 'authentication:profile' %}"><i class="ri ri-home-gear-line"></i> Parametres</a></li>
+                                <li><a class="dropdown-item" href="{% url 'authentication:profile' user.id %}"><i class="ri ri-user-fill"></i> Mon Profil</a></li>
+                                <li><a class="dropdown-item" href="{% url 'authentication:user_settings' %}"><i class="ri ri-home-gear-line"></i> Parametres</a></li>
                                 <li><a class="dropdown-item" href="{% url 'authentication:change_password' %}"><i class="ri ri-lock-line"></i> Mot de passe</a></li>
                                 <li><a class="dropdown-item" href="{% url 'authentication:logout' %}"><i class="ri ri-logout-box-line"></i> Se deconnecter</a></li>
                             </ul>
