@@ -2,6 +2,8 @@ import json
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+from django.contrib import messages
+from django.utils.translation import gettext_lazy as _
 
 # Create your views here.
 from pointing.models import Presence, PrecenceItem
@@ -38,6 +40,7 @@ def add_presence(request):
                                     date=precence_item['Date'],
                                     identifier=precence_item['Prénom']
                                 )
+                        messages.success(request, _("La liste des pointages a ete ajouter avec succes !"))
                     except :
                         pass
 

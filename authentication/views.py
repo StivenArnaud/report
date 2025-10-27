@@ -64,8 +64,9 @@ def user_register(request):
                 email=form.cleaned_data['email'],
                 username=form.cleaned_data['email'],
                 password=form.cleaned_data['phone'],
-                role=User.EMPLOYEE,
+                role=form.cleaned_data['role'],
                 company=request.user.company,
+                identifier=form.cleaned_data['identifier'],
             )
             user.username = user.email
             user.set_password(form.cleaned_data['phone'])
