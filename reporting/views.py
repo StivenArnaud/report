@@ -58,7 +58,7 @@ def edit_report(request, report_id):
 
 @login_required
 def detail_report(request, report_id):
-    report = get_object_or_404(Report, pk=report_id, user=request.user)
+    report = get_object_or_404(Report, pk=report_id)
     tasks = report.tasks.all()
 
     context = {
