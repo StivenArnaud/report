@@ -18,7 +18,7 @@
                 </div>
                 <div class="col-lg-3">
                     <div class="browse-btn mt-2">
-                        {% if user.role != user.EMPLOYEE %}
+                        {% if user.role != user.EMPLOYEE and report.user != user %}
                         <button data-bs-toggle="modal" data-bs-target="#exampleModal"
                            class="post-btn mt-3">Noter le rapport</button>
                         {% endif %}
@@ -75,14 +75,23 @@
                 </div>
                 <div class="col-lg-3">
                     <div class="job-details-widget-side pr-20">
-                        {% if report.marks %}
+                        {% if report.marks or report.admin_marks %}
                         <div class="card w-100 mb-4">
                             <div class="card-header">
                                 <h5 class="card-title">Note du rapport</h5>
                             </div>
                             <div class="card-body">
-                                <h5 class="card-title">Note : {{ report.marks }}/5</h5>
-                                <p class="card-text"><span class="fst-italic fw-bold text-dark">Observation : </span>{{ report.responsible_comments|default_if_none:"Pas d'observation" }}</p>
+                                {% if report.marks %}
+                                    <h5 class="card-title">Note du Respo. : {{ report.marks }}/5</h5>
+                                    <p class="card-text"><span class="fst-italic fw-bold text-dark">Observation : </span>{{ report.responsible_comments|default_if_none:"Pas d'observation" }}</p>
+                                    <small class="text-muted fst-italic">Noté par : {{ report.marks_user.get_full_name }}</small>
+                                    <hr class="my-4">
+                                {% endif %}
+                                {% if report.admin_marks  %}
+                                    <h5 class="card-title">Note du DG : {{ report.admin_marks }}/5</h5>
+                                    <p class="card-text"><span class="fst-italic fw-bold text-dark">Observation : </span>{{ report.admin_comments|default_if_none:"Pas d'observation" }}</p>
+                                    <small class="text-muted fst-italic">Noté par : {{ report.admin_marks_user.get_full_name }}</small>
+                                {% endif %}
                             </div>
                         </div>
                         {% endif %}
@@ -110,7 +119,7 @@
                                             <label for="title">Note sur 5 <span
                                                     class="text-danger">*</span></label>
                                             <input type="number" class="form-control" name="marks"
-                                                   id="title"
+                                                   id="title" min="0" max="5"
                                                    placeholder="ex.: 4" required>
                                     </div>
                                     <div class="col-xl-12 col-lg-12 col-md-12">

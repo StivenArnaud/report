@@ -16,5 +16,6 @@ urlpatterns = [
     path('edit-report/<uuid:report_id>/', views.edit_report, name='edit_report'),
     path('list-reports/', views.list_reports, name='list_reports'),
     path('period-form/', views.period_form, name='period_form'),
-    path('mark-report/<uuid:report_id>/', views.mark_report, name='mark_report')
+    path('mark-report/<uuid:report_id>/', views.mark_report, name='mark_report'),
+    path('reports-calendar-data/<uuid:user_id>', views.get_reports_calendar_data, name='reports_calendar_data'),
 ]

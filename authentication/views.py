@@ -136,15 +136,16 @@ def user_detail(request, user_id):
 
     if 'HX-Request' in request.headers:
         calendar_date = request.GET.get('date')
+
         report = None
         presence_items = []
         date_aware = None
         if calendar_date:
             date_naive = datetime.strptime(calendar_date, "%Y-%m-%d")
             date_aware = timezone.make_aware(date_naive)
-            presence_items = PrecenceItem.objects.filter(date=date_aware, user__id=user_id)
+            presence_items = PrecenceItem.objects.filter(date=date_aware, user=single_user)
             try:
-                report = Report.objects.get(user__id=user_id, published=True, created__date=calendar_date)
+                report = Report.objects.filter(user=single_user, published=True, created__date=date_aware).first()
             except:
                 pass
         context = {
