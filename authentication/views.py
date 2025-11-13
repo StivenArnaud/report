@@ -102,7 +102,7 @@ def list_users(request):
     if request.user.role == User.RESPONSIBLE:
         users = User.objects.select_related('responsible').filter(responsible=request.user)
 
-    responsible_users = User.objects.filter(role=User.RESPONSIBLE)
+    responsible_users = User.objects.filter(role__in=[User.RESPONSIBLE, User.RH, User.ADMIN])
 
     paginator = Paginator(users, 10)
     page = request.GET.get('page')
