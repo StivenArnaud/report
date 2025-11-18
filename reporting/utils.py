@@ -16,6 +16,6 @@ def temps_restant_jour(date_report: datetime):
         return temps_restant
 
     # Calculer la différence
-    temps_restant = debut_demain - maintenant
+    temps_restant = debut_demain - datetime.now().astimezone()
 
     return temps_restant
