@@ -26,3 +26,7 @@ class TaskForm(forms.ModelForm):
         fields = ('title',)
 
 
+class EditTaskForm(forms.Form):
+    title_edit = forms.Textarea()
+
+

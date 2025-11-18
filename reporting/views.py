@@ -12,8 +12,8 @@ from django.utils import timezone
 # Create your views here.
 from authentication.models import User
 from reporting.models import Report, Task
-from reporting.forms import ReportForm, TaskForm, EditReportForm, MarkReportForm
-from reporting.utils import temps_restant_jour
+from reporting.forms import ReportForm, TaskForm, EditReportForm, MarkReportForm, EditTaskForm
+
 
 
 @login_required
@@ -31,7 +31,7 @@ def add_report(request):
 def edit_report(request, report_id):
     report = get_object_or_404(Report, pk=report_id, user=request.user)
     tasks = report.tasks.all()
-    temps_restant = temps_restant_jour(report.created)
+    temps_restant = report.temps_restant_jour()
 
     if temps_restant is None:
         return redirect('reporting:list_reports')
@@ -78,6 +78,7 @@ def detail_report(request, report_id):
 def list_reports(request):
     reports = []
     report_type = request.GET.getlist('report_type')
+    draft = request.GET.get('draft')
 
     if request.user.role == User.EMPLOYEE:
         reports = Report.objects.prefetch_related('tasks', 'user__responsible').filter(user=request.user)
@@ -92,6 +93,9 @@ def list_reports(request):
 
     if report_type:
         reports = reports.filter(type__in=report_type)
+
+    if draft:
+        reports = reports.filter(published=False, user=request.user)
 
     paginator = Paginator(reports, 10)
     page = request.GET.get('page')
@@ -112,6 +116,20 @@ def list_reports(request):
     }
 
     return render(request, 'frontend/reporting/list_reports.html', context)
+
+
+@login_required
+def delete_report(request, report_id):
+    report = get_object_or_404(Report, pk=report_id, user=request.user)
+    report.delete()
+    return HttpResponse('')
+
+@login_required
+def publish_report(request, report_id):
+    report = get_object_or_404(Report, pk=report_id, user=request.user)
+    report.published = True
+    report.save()
+    return render(request, 'frontend/reporting/partials/report_card_item.html', {'report': report})
 
 
 @login_required
@@ -140,11 +158,11 @@ def delete_task(request, task_id):
 
 @login_required
 def edit_task(request, task_id):
-    task = get_object_or_404(Task, pk=task_id, user=request.user)
+    task = get_object_or_404(Task, id=task_id, user=request.user)
     if request.method == 'POST':
-        form = TaskForm(request.POST, instance=task)
+        form = EditTaskForm(request.POST)
         if form.is_valid():
-            task = form.save(commit=False)
+            task.title = request.POST.get('title_edit')
             task.user = request.user
             task.save()
             return render(request, 'frontend/reporting/partials/task-item.html', {'task': task})
@@ -152,8 +170,7 @@ def edit_task(request, task_id):
             return HttpResponse('')
 
     else:
-        form = TaskForm(instance=task)
-        return HttpResponse('')
+        return render(request, 'frontend/reporting/partials/task-form.html', {'task': task})
 
 @login_required
 def complete_task(request, task_id):

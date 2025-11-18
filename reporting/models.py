@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime, timedelta, timezone
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -44,12 +45,30 @@ class Report(models.Model):
         verbose_name_plural = _('Rapports')
         ordering = ['-created']
 
+    def temps_restant_jour(self):
+        temps_restant = None
+        maintenant = self.created.astimezone()
+
+        # Calculer le début du jour suivant (minuit)
+        debut_demain = (maintenant + timedelta(days=1)).replace(
+            hour=0, minute=0, second=0, microsecond=0
+        )
+
+        if datetime.now().astimezone() >= debut_demain:
+            temps_restant = None
+            return temps_restant
+
+        # Calculer la différence
+        temps_restant = debut_demain - maintenant
+
+        return temps_restant
+
 
 class Task(models.Model):
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     report = models.ForeignKey(Report, on_delete=models.CASCADE, verbose_name=_('Rapport'), related_name='tasks')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name=_('Utilisateur'))
-    title = models.CharField(max_length=255, verbose_name=_('Nom de la tache'))
+    title = models.TextField(max_length=1500, verbose_name=_('Nom de la tache'))
     is_completed = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

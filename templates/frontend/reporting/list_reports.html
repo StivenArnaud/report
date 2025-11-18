@@ -1,6 +1,24 @@
-
 {% extends 'frontend/base.html' %}
 
+
+{% block style %}
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+
+        /* Animation plus fluide */
+        .fixed {
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        /* Style pour le bouton désactivé */
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+    </style>
+{% endblock %}
 
 {% block content %}
     <div class="job-listing-area pb-2 pt-150" style="background: #f1f1f1;">
@@ -23,7 +41,8 @@
     <div class="job-listing-area pb-70" style="background: #f1f1f1">
         <div class="container">
             <div class="row">
-                <div class="col-lg-4" hx-target="#job-list-content" hx-swap="outerHTML show:top" hx-include="#filter-form">
+                <div class="col-lg-4" hx-target="#job-list-content" hx-swap="outerHTML show:top"
+                     hx-include="#filter-form">
                     <form id="filter-form">
                         <div class="job-listing-side-bar">
                             <div class="job-listing-widget mb-1">
@@ -37,10 +56,18 @@
                                             {% for key, report_type in report_types %}
                                                 <hr>
                                                 <li>
-                                                    <input id="check-job-{{ key }}" type="checkbox" name="report_type" value="{{ key }}" hx-get="{% url 'reporting:list_reports' %}">
+                                                    <input id="check-job-{{ key }}" type="checkbox" name="report_type"
+                                                           value="{{ key }}"
+                                                           hx-get="{% url 'reporting:list_reports' %}">
                                                     <label for="check-job-{{ key }}">{{ report_type }}</label>
                                                 </li>
                                             {% endfor %}
+                                            <hr>
+                                            <li>
+                                                <input id="check-job-draft" type="checkbox" name="draft" value="draft"
+                                                       hx-get="{% url 'reporting:list_reports' %}">
+                                                <label for="check-job-draft">Brouillon</label>
+                                            </li>
                                         </ul>
                                     </li>
                                 </ul>
@@ -56,8 +83,11 @@
                                             {% for domain in domains %}
                                                 {% if domain.jobs.count > 0 %}
                                                     <li>
-                                                        <input id="check-{{ domain.name }}" type="checkbox" name="domain" value="{{ domain.id }}" hx-get="{% url 'core:home' %}">
-                                                        <label for="check-{{ domain.name }}">{{ domain.name }} <span class="fl">{{ domain.jobs.count }}</span></label>
+                                                        <input id="check-{{ domain.name }}" type="checkbox"
+                                                               name="domain" value="{{ domain.id }}"
+                                                               hx-get="{% url 'core:home' %}">
+                                                        <label for="check-{{ domain.name }}">{{ domain.name }} <span
+                                                                class="fl">{{ domain.jobs.count }}</span></label>
                                                     </li>
                                                 {% endif %}
                                             {% endfor %}
@@ -72,4 +102,9 @@
             </div>
         </div>
     </div>
+
+{% endblock %}
+
+{% block script %}
+
 {% endblock %}
