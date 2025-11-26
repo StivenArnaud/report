@@ -17,6 +17,9 @@ from pointing.models import Presence, PrecenceItem
 from reporting.models import Report
 
 def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('reporting:list_reports')
+
     msg = _("")
     if request.method == 'POST':
         form = LoginForm(request.POST)

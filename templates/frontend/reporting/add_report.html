@@ -286,8 +286,8 @@
                 </div>
                 <div class="col-lg-3">
                     <div class="browse-btn mt-2">
-                        <a href="#"
-                           class="post-btn mt-3">Soumettre mon rapport</a>
+                        <a href="{% url 'reporting:detail_report' report.id %}"
+                           class="post-btn mt-3" tabindex="1" target="_blank">Prévisualiser</a>
                     </div>
                 </div>
             </div>

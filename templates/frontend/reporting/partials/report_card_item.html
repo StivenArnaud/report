@@ -41,18 +41,13 @@
             <div class="mt-4">
                 <a href="{% url 'reporting:detail_report' report.id %}"
                    class="btn btn-sm btn-outline-primary fw-normal">Voir</a>
-                {% if not report.published and report.user == user %}
-                    {% if report.temps_restant_jour %}
+                {% if report.user == user %}
+                    {% if not report.published and report.temps_restant_jour %}
                         <a href="{% url 'reporting:edit_report' report.id %}"
                            class="btn btn-sm btn-warning fw-normal">Modifier</a>
-                    {% else %}
-                        <button hx-get="{% url 'reporting:publish_report' report.id %}"
-                                hx-confirm="Êtes-vous sûr de vouloir soumettre le {{ report.title }} ?"
-                                hx-target="#report-{{ report.id }}"
-                                hx-swap="outerHTML"
-                                hx-include="#filter-form"
-                           class="btn btn-sm btn-success fw-normal">Soumettre</button>
                     {% endif %}
+
+                    {% if not report.published or report.temps_restant_jour %}
                     <button
                             class="btn btn-sm btn-secondary fw-normal"
                             hx-delete="{% url 'reporting:delete_report' report.id %}"
@@ -62,6 +57,7 @@
                     >
                         Supprimer
                     </button>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>

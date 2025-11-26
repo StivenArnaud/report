@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="fr">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REPORT - Erreur 404</title>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.ico' %}">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <!-- Animation CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .error-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .error-code {
+            font-size: 8rem;
+            font-weight: 800;
+            color: #9f0505;
+            text-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+            margin-bottom: 0;
+            line-height: 1;
+        }
+
+        .error-title {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #b11906;
+            margin-bottom: 1.5rem;
+        }
+
+        .error-message {
+            font-size: 1.2rem;
+            color: #070d30;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .error-illustration {
+            max-width: 300px;
+            margin: 2rem auto;
+            position: relative;
+        }
+
+        .error-illustration img {
+            width: 100%;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
+        }
+
+        .btn-home {
+            padding: 0.75rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .btn-home:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .rotate {
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Animation de clignement des yeux */
+        @keyframes blink {
+            0%, 90%, 94%, 98%, 100% {
+                transform: scaleY(1);
+            }
+            92%, 96% {
+                transform: scaleY(0.1);
+            }
+        }
+
+        .eye-left, .eye-right {
+            animation: blink 5s infinite;
+            transform-origin: center;
+        }
+
+        .eye-right {
+            animation-delay: 0.5s;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .error-code {
+                font-size: 6rem;
+            }
+
+            .error-title {
+                font-size: 2rem;
+            }
+
+            .error-message {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .error-code {
+                font-size: 4rem;
+            }
+
+            .error-title {
+                font-size: 1.5rem;
+            }
+
+            .error-illustration {
+                max-width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-10 col-lg-8">
+                <div class="error-container animate__animated animate__fadeIn">
+                    <div class="error-code pulse">{{ title }}</div>
+                    <h1 class="error-title">{{ content }}</h1>
+                    <p class="error-message">
+                        Désolé, la page que vous recherchez semble introuvable.
+                        Elle a peut-être été déplacée, supprimée ou n'a jamais existé.
+                    </p>
+
+                    <div class="error-illustration floating">
+                        <!-- SVG avec animation de clignement des yeux -->
+                        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Tête -->
+                            <circle cx="100" cy="100" r="80" fill="#A30707" stroke="#fff" stroke-width="2"/>
+
+                            <!-- Yeux -->
+                            <g class="eye-left">
+                                <circle cx="80" cy="80" r="10" fill="#fff"/>
+                                <circle cx="80" cy="80" r="5" fill="#333"/>
+                            </g>
+                            <g class="eye-right">
+                                <circle cx="120" cy="80" r="10" fill="#fff"/>
+                                <circle cx="120" cy="80" r="5" fill="#333"/>
+                            </g>
+
+                            <!-- Bouche -->
+                            <path d="M70 130 Q100 150 130 130" stroke="#fff" stroke-width="3" fill="none"/>
+                        </svg>
+                    </div>
+
+                    <div class="d-flex flex-column flex-sm-row justify-content-center gap-3 mt-4">
+                        <a href="{% url 'authentication:login' %}" class="btn btn-primary btn-home animate__animated animate__pulse animate__infinite animate__slower">
+                            <i class="bi bi-house-door-fill me-2"></i> Retour à l'accueil
+                        </a>
+                        <a href="javascript:history.back()" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-2"></i> Page précédente
+                        </a>
+                    </div>
+
+                    <div class="mt-5">
+                        <p class="text-muted small text-danger">
+                            Si vous pensez qu'il s'agit d'une erreur, veuillez contacter l'administrateur du site.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS avec Popper -->
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+</body>
+</html>

@@ -1,4 +1,5 @@
 import calendar
+from datetime import datetime, timedelta
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -8,6 +9,7 @@ from datetime import datetime
 from django.http import HttpResponse, JsonResponse, Http404
 from django.db.models import Q
 from django.utils import timezone
+from openpyxl.styles.builtins import total
 
 # Create your views here.
 from authentication.models import User
@@ -284,6 +286,93 @@ def get_reports_calendar_data(request, user_id):
         calendar_data[date_key]['total'] += 1
 
     return JsonResponse(calendar_data)
+
+
+@login_required
+def monitoring_report(request):
+    return render(request, 'frontend/reporting/monitoring_report.html')
+
+
+def get_week_days(start_date):
+    """Retourne les dates du lundi au dimanche à partir d'un lundi donné."""
+    return [start_date + timedelta(days=i) for i in range(7)]
+
+
+@login_required
+def weekly_daily_reports(request):
+    """
+    Retourne les rapports quotidiens pour une semaine donnée,
+    envoyée par HTMX via week_start (YYYY-MM-DD).
+    """
+    # 1) Récupérer la date envoyée par HTMX
+    week_start_str = request.GET.get("week_start")
+    total_reports = 0
+    published_reports = 0
+    not_published_reports = 0
+
+    if week_start_str:
+        try:
+            week_start = datetime.strptime(week_start_str, "%Y-%m-%d").date()
+        except ValueError:
+            week_start = timezone.localdate()
+    else:
+        # Semaine courante
+        today = timezone.localdate()
+        week_start = today - timedelta(days=today.weekday())  # lundi
+
+    # 2) Construire la liste des jours de la semaine (lundi → dimanche)
+    week_days = get_week_days(week_start)
+
+    # 3) Charger tous les utilisateurs actifs
+    users = User.objects.filter(is_active=True).order_by("last_name", "first_name")
+
+    # 4) Précharger tous les rapports quotidiens (type = RQ) de la semaine
+    reports = Report.objects.filter(
+        type=Report.RQ,
+        created__date__in=week_days
+    ).select_related("user")
+
+    # 5) Créer un dictionnaire pour accéder rapidement aux rapports par utilisateur et par jour
+    # report_map = {user_id: {date: report}}
+    report_map = {}
+    for r in reports:
+        report_map.setdefault(r.user_id, {})
+        # Utilisation de r.created.date() pour ne garder que la date
+        report_map[r.user_id][r.created.date()] = r
+
+    # 6) Construire la structure people_data pour le template
+    people_data = []
+    for user in users:
+        person = {
+            "name": f"{user.last_name} {user.first_name}",
+            "inserted": True,  # actif
+            "days": []
+        }
+
+        for day in week_days:
+            rep = report_map.get(user.id, {}).get(day)
+            total_reports += 1
+            published_reports += 1 if rep else 0
+            not_published_reports += 1 if not rep else 0
+
+            person["days"].append({
+                "transmitted": rep.published if rep else False
+            })
+
+        people_data.append(person)
+
+    # 7) Retour HTMX : template partiel avec le tableau
+    if 'HX-Request' in request.headers:
+        return render(request, 'frontend/reporting/partials/people_table.html', {
+            'people_data': people_data,
+            'week_start': week_start,
+            'week_days': week_days,
+            'percent_published': published_reports / total_reports * 100 if total_reports else 0,
+            'percent_not_published': not_published_reports / total_reports * 100 if total_reports else 0,
+        })
+
+    # 8) Fallback JSON pour test si non-HTMX
+    return JsonResponse({"week_start": str(week_start)})
 
 
 

@@ -42,6 +42,11 @@
                                 Pointage
                             </a>
                         </li>
+                        {% comment %}<li class="nav-item">
+                            <a href="{% url 'reporting:monitoring_report' %}" class="nav-link {% active_link 'reporting:monitoring_report' strict=True %}">
+                                Suivi Hebdomadaire
+                            </a>
+                        </li>{% endcomment %}
                         {% endif %}
                         <li class="nav-item">
                             <a href="#" class="nav-link {% active_link 'core:home' strict=True %}">

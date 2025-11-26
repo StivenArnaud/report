@@ -1,0 +1,268 @@
+{% extends 'frontend/base.html' %}
+
+
+{% block style %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/monitoring_report.css' %}">
+{% endblock %}
+
+
+{% block content %}
+    <div class="company-area pt-100 pb-3" style="background: #f1f1f1;">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-12">
+                    <div class="section-title">
+                        <h2 style="font-size: 28px" class="fw-bolder">Suivi des Rapports</h2>
+                        <p>Tableau de Suivi d'Inscription et Rapports</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid pt-5 pb-70">
+        <div class="container-page">
+            <h1 class="text-center mb-4"></h1>
+
+            <!-- Légende -->
+            <div class="legend">
+                <div class="legend-item">
+                    <span class="status-dot inserted"></span>
+                    <span>Inserté</span>
+                </div>
+                <div class="legend-item">
+                    <span class="status-dot not-inserted"></span>
+                    <span>Non inserté</span>
+                </div>
+                <div class="legend-item">
+                    <span class="status-square transmitted"></span>
+                    <span>Transmis</span>
+                </div>
+                <div class="legend-item">
+                    <span class="status-square not-transmitted"></span>
+                    <span>Non transmis</span>
+                </div>
+            </div>
+
+            <!-- Premier tableau -->
+            <div class="card">
+                <div class="header">
+                    <h3 class="mb-0 text-light">RAPPORTS QUOTIDIENS/HEBDOMADAIRES</h3>
+                </div>
+                <div class="p-3">
+                    <!-- Navigation par semaine -->
+                    <div class="week-navigation">
+                        <button class="btn btn-outline-primary" id="prev-week">
+                            <i class="bi bi-chevron-left"></i> <span
+                                class="d-none d-sm-inline">Semaine précédente</span>
+                        </button>
+
+                        <div class="week-selector">
+                            <label for="week-picker" class="form-label mb-0 align-middle d-none d-md-inline">Choisir une
+                                semaine:</label>
+                            <input type="week" class="form-control" id="week-picker" style="width: auto;">
+                            <button class="btn btn-outline-secondary today-btn" id="today-btn">
+                                Aujourd'hui
+                            </button>
+                            <button class="btn btn-outline-info refresh-btn" id="refresh-btn"
+                                    hx-get="{% url 'reporting:weekly_daily_reports' %}"
+                                    hx-target="#people-data-container"
+                                    hx-indicator="#loading-indicator">
+                                <i class="bi bi-arrow-clockwise"></i> Actualiser
+                            </button>
+                            <div id="loading-indicator" class="spinner-border spinner-border-sm htmx-indicator"
+                                 role="status">
+                                <span class="visually-hidden">Chargement...</span>
+                            </div>
+                        </div>
+
+                        <div class="week-display" id="week-display">
+                            Semaine du 10 au 16 Novembre 2025
+                        </div>
+
+                        <button class="btn btn-outline-primary" id="next-week">
+                            <span class="d-none d-sm-inline">Semaine suivante</span> <i class="bi bi-chevron-right"></i>
+                        </button>
+                    </div>
+
+                    <div class="loading-overlay" id="loading-overlay"
+                         style="display: none;"
+                         hx-get="{% url 'reporting:weekly_daily_reports' %}"
+                         hx-trigger="load"
+                         hx-swap="innerHTML"
+                         hx-target="#people-data-container"
+                         hx-indicator="#loading-indicator"
+                    >
+
+                    </div>
+
+                    <!-- Conteneur pour les données des personnes (sera mis à jour par HTMX) -->
+                    <div id="people-data-container">
+                        <!-- Le contenu sera chargé dynamiquement par HTMX -->
+                        {% include "frontend/reporting/partials/people_table.html" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+
+{% block script %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Dates initiales basées sur l'exemple (10 novembre 2025 est un lundi)
+            let currentWeekStart = getToDay(); // 10 novembre 2025
+
+            // Mettre à jour l'affichage de la semaine
+            function updateWeekDisplay() {
+                const weekDisplay = document.getElementById('week-display');
+                const monday = new Date(currentWeekStart);
+                const sunday = new Date(currentWeekStart);
+                sunday.setDate(sunday.getDate() + 6);
+
+                weekDisplay.textContent = `Semaine du ${formatDate(monday)} au ${formatDate(sunday)}`;
+
+                // Mettre à jour les en-têtes de colonnes
+                updateDateHeaders();
+
+                // Mettre à jour le sélecteur de semaine
+                updateWeekPicker();
+            }
+
+            // Formater une date en "10 novembre 2025"
+            function formatDate(date) {
+                const options = {day: 'numeric', month: 'long', year: 'numeric'};
+                return date.toLocaleDateString('fr-FR', options);
+            }
+
+            // Formater une date en "Lun 10"
+            function formatShortDate(date) {
+                const options = {weekday: 'short', day: 'numeric'};
+                return date.toLocaleDateString('fr-FR', options);
+            }
+
+            // Mettre à jour les en-têtes de colonnes avec les dates
+            function updateDateHeaders() {
+                const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+
+                days.forEach((day, index) => {
+                    const date = new Date(currentWeekStart);
+                    date.setDate(date.getDate() + index);
+                    const element = document.getElementById(day);
+                    if (element) {
+                        element.textContent = formatShortDate(date);
+                    }
+                });
+            }
+
+            // Mettre à jour le sélecteur de semaine
+            function updateWeekPicker() {
+                const weekPicker = document.getElementById('week-picker');
+                // Format pour l'input week: YYYY-Www (où ww est le numéro de semaine)
+                const year = currentWeekStart.getFullYear();
+                const weekNumber = getWeekNumber(currentWeekStart);
+                weekPicker.value = `${year}-W${weekNumber.toString().padStart(2, '0')}`;
+            }
+
+            // Obtenir le numéro de semaine d'une date
+            function getWeekNumber(date) {
+                const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+                const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
+                return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+            }
+
+            // Obtenir le lundi d'une semaine donnée (à partir d'un numéro de semaine)
+            function getMondayOfWeek(year, week) {
+                const simple = new Date(year, 0, 1 + (week - 1) * 7);
+                const dayOfWeek = simple.getDay();
+                const monday = simple;
+                if (dayOfWeek <= 1) {
+                    monday.setDate(simple.getDate() - simple.getDay() + 1);
+                } else {
+                    monday.setDate(simple.getDate() + 8 - simple.getDay());
+                }
+                return monday;
+            }
+
+            // Navigation semaine précédente
+            document.getElementById('prev-week').addEventListener('click', function () {
+                currentWeekStart.setDate(currentWeekStart.getDate() - 7);
+                updateWeekDisplay();
+                // Actualiser le contenu du chargement avec la nouvelle semaine
+                getTableData(currentWeekStart.toISOString().split('T')[0]);
+            });
+
+            // Navigation semaine suivante
+            document.getElementById('next-week').addEventListener('click', function () {
+                currentWeekStart.setDate(currentWeekStart.getDate() + 7);
+                updateWeekDisplay();
+                // Actualiser le contenu du chargement avec la nouvelle semaine
+                getTableData(currentWeekStart.toISOString().split('T')[0]);
+            });
+
+            // Sélecteur de semaine
+            document.getElementById('week-picker').addEventListener('change', function () {
+                const weekValue = this.value;
+                if (weekValue) {
+                    const [year, week] = weekValue.split('-W');
+                    currentWeekStart = getMondayOfWeek(parseInt(year), parseInt(week));
+                    console.log(currentWeekStart);
+                    updateWeekDisplay();
+                    // Actualiser le contenu du chargement avec la nouvelle semaine
+                    getTableData(currentWeekStart.toISOString().split('T')[0]);
+                }
+            });
+
+            // Bouton "Aujourd'hui"
+            document.getElementById('today-btn').addEventListener('click', function () {
+                currentWeekStart = getToDay()
+                updateWeekDisplay();
+                getTableData(currentWeekStart.toISOString().split('T')[0]);
+            });
+
+            // Initialiser l'affichage
+            updateWeekDisplay();
+
+            // Configurer HTMX pour mettre à jour les données
+            document.body.addEventListener('htmx:afterRequest', function (evt) {
+                if (evt.detail.target.id === 'people-data-container') {
+                    // Mettre à jour les en-têtes de date après le chargement des données
+                    updateDateHeaders();
+                }
+            });
+
+            function getToDay(){
+                const today = new Date();
+                // Trouver le lundi de cette semaine
+                const dayOfWeek = today.getDay();
+                const diff = today.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
+                return new Date(today.setDate(diff));
+            }
+
+            function  getTableData(week_start){
+                const url = "{% url 'reporting:weekly_daily_reports' %}";
+                htmx.ajax('GET', `${url}?week_start=${week_start}`, {
+                    target: '#people-data-container',
+                    swap: 'innerHTML',
+                });
+            }
+        });
+
+        // Mettre à jour les en-têtes de jour pour l'affichage mobile
+        document.addEventListener('DOMContentLoaded', function() {
+            const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+            days.forEach((day, index) => {
+                const dateElement = document.getElementById(day);
+                if (dateElement) {
+                    const mobileDayHeader = document.getElementById('mobile-day-' + index);
+                    if (mobileDayHeader) {
+                        mobileDayHeader.textContent = dateElement.textContent;
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}
+

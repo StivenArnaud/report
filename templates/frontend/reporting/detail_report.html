@@ -50,7 +50,7 @@
                                                 <h5>Taches accomplies</h5>
                                                 <ul>
                                                     {% for task in tasks %}
-                                                        <li>{{ task.title }} {% if task.is_completed %}<i class="ri ri-check-fill fs-5 text-success"></i>{% else %}<i class="ri ri-close-fill fs-5 text-danger"></i>{% endif %}</li>
+                                                        <li>{{ task.title }} {% if task.is_completed %}<span class="badge bg-success-subtle text-success">Terminer</span>{% else %}<span class="badge bg-warning-subtle text-warning">En cours</span>{% endif %}</li>
                                                     {% endfor %}
                                                 </ul>
                                                 {% endif %}

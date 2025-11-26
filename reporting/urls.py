@@ -20,4 +20,6 @@ urlpatterns = [
     path('period-form/', views.period_form, name='period_form'),
     path('mark-report/<uuid:report_id>/', views.mark_report, name='mark_report'),
     path('reports-calendar-data/<uuid:user_id>', views.get_reports_calendar_data, name='reports_calendar_data'),
+    path('monitoring-report/', views.monitoring_report, name='monitoring_report'),
+    path('reports-daily-week/', views.weekly_daily_reports, name='weekly_daily_reports'),
 ]
