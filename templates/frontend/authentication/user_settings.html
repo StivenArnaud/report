@@ -160,7 +160,7 @@
                             </div>
                             <div class="col-md-6 date-input-group">
                                 <label class="date-label fw-bold">{{ profile_form.salary.label }} <span class="text-danger">*</span></label>
-                                <input type="number" class="date-input" value="{{ profile_form.salary.value|default_if_none:'' }}" id="{{ profile_form.salary.name }}"
+                                <input type="number" class="date-input" value="{{ profile_form.salary.value|floatformat:'0'|default_if_none:'' }}" id="{{ profile_form.salary.name }}"
                                        name="{{ profile_form.salary.name }}" placeholder="Ex: 200000" required>
                             </div>
                         </div>
