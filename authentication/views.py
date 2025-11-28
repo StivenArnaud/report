@@ -15,6 +15,7 @@ from authentication.models import User, Profile
 from authentication.forms import RegisterForm, LoginForm, UpdateUserForm, UpdateProfileForm
 from pointing.models import Presence, PrecenceItem
 from reporting.models import Report
+from company.models import Company
 
 def login_view(request):
     if request.user.is_authenticated:
@@ -132,8 +133,7 @@ def list_users(request):
 @login_required
 def user_detail(request, user_id):
     try:
-        single_user = User.objects.select_related('company', 'responsible').get(pk=user_id,
-                                                                                company=request.user.company)
+        single_user = User.objects.select_related('company', 'responsible').get(pk=user_id)
     except:
         raise Http404('User does not exist')
 
@@ -204,6 +204,7 @@ def change_password(request):
 
 @login_required
 def user_settings(request, user_id):
+    companies = Company.objects.all()
     try:
         old_user = User.objects.get(pk=user_id)
         old_profile = Profile.objects.get(user=old_user)
@@ -236,6 +237,7 @@ def user_settings(request, user_id):
         'profile_form': profile_form,
         'single_user': old_user,
         'profile': old_profile,
+        'companies': companies
     }
 
     return render(request, 'frontend/authentication/user_settings.html', context)
@@ -243,10 +245,12 @@ def user_settings(request, user_id):
 @login_required
 def profile_view(request, user_id):
     try:
-        user = User.objects.get(pk=user_id, company=request.user.company)
-        profile = Profile.objects.get(user=user, company=request.user.company)
-    except:
-        profile = None
+        user = User.objects.get(pk=user_id)
+        profile = Profile.objects.get(user=user)
+    except Profile.DoesNotExist:
+        old_profile = None
+    except User.DoesNotExist:
+        raise Http404('User does not exist')
 
     context = {
         'single_user': user,

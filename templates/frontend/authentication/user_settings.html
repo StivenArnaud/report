@@ -82,6 +82,16 @@
                     <form method="post" enctype="multipart/form-data" id="myForm">
                         {% csrf_token %}
 
+                        <div class="date-input-group mb-3" {% if user.role != user.RH %} style="display: none;" {% endif %}>
+                            <label class="date-label fw-bold">{{ form.company.label }} <span class="text-danger">*</span></label>
+                            <select class="date-input" id="{{ form.company.name }}" name="{{ form.company.name }}" required>
+                                <option value="" disabled>Choisir le genre</option>
+                                {% for elmnt in companies %}
+                                <option value="{{ elmnt.id }}" {% if form.company.value == elmnt.id %}selected{% endif %}>{{ elmnt.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
                         <div class="date-input-group mb-3">
                             <label class="date-label fw-bold">Nom d'utilisation</label>
                             <input type="text" class="date-input" id="dateDebut" value="{{ single_user.username }}" disabled>
@@ -135,6 +145,11 @@
                         <div class="date-input-group mb-3">
                             <label class="date-label fw-bold">{{ form.address.label }} <span class="text-danger">*</span></label>
                             <input type="text" class="date-input" placeholder="Ex: Cocody II plateaux" value="{{ form.address.value|default_if_none:'' }}" id="{{ form.address.name }}" name="{{ form.address.name }}" required>
+                        </div>
+
+                        <div class="date-input-group mb-3" {% if user.role != user.RH %} style="display: none;" {% endif %}>
+                            <label class="date-label fw-bold">{{ form.identifier.label }} <span class="text-danger">*</span></label>
+                            <input type="text" class="date-input" placeholder="Ex: KOUASSI" value="{{ form.identifier.value|default:single_user.first_name }}" id="{{ form.identifier.name }}" name="{{ form.address.name }}" required>
                         </div>
 
                         <div class="row date-inputs-section" id="period-form">
