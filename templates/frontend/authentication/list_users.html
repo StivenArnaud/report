@@ -141,7 +141,7 @@
                                             <i class="ri ri-eye-fill"></i>
                                         </a>
                                         {% if user.role == user.RH %}
-                                        <a class="btn btn-sm btn-outline-primary" title="Modifier">
+                                        <a href="{% url 'authentication:user_settings' single_user.id %}" class="btn btn-sm btn-outline-primary" title="Modifier">
                                             <i class="ri ri-edit-2-line"></i>
                                         </a>
                                         <a class="btn btn-sm btn-outline-danger" title="Supprimer">

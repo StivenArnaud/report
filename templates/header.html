@@ -42,11 +42,11 @@
                                 Pointage
                             </a>
                         </li>
-                        {% comment %}<li class="nav-item">
+                        <li class="nav-item">
                             <a href="{% url 'reporting:monitoring_report' %}" class="nav-link {% active_link 'reporting:monitoring_report' strict=True %}">
                                 Suivi Hebdomadaire
                             </a>
-                        </li>{% endcomment %}
+                        </li>
                         {% endif %}
                         <li class="nav-item">
                             <a href="#" class="nav-link {% active_link 'core:home' strict=True %}">
@@ -63,7 +63,7 @@
                                         class="ri-user-3-line"></i></a>
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item" href="{% url 'authentication:profile' user.id %}"><i class="ri ri-user-fill"></i>Mon Profil</a></li>
-                                    <li><a class="dropdown-item" href="{% url 'authentication:user_settings' %}"><i class="ri ri-home-gear-line"></i> Parametres</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'authentication:user_settings' user.id %}"><i class="ri ri-home-gear-line"></i> Parametres</a></li>
                                     <li><a class="dropdown-item" href="{% url 'authentication:change_password' %}"><i class="ri ri-lock-line"></i> Mot de passe</a></li>
                                     <li><a class="dropdown-item" href="{% url 'authentication:logout' %}"><i class="ri ri-logout-box-line"></i> Se deconnecter</a></li>
                                 </ul>
@@ -99,7 +99,7 @@
                                     class="ri-user-3-line"></i></a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="{% url 'authentication:profile' user.id %}"><i class="ri ri-user-fill"></i> Mon Profil</a></li>
-                                <li><a class="dropdown-item" href="{% url 'authentication:user_settings' %}"><i class="ri ri-home-gear-line"></i> Parametres</a></li>
+                                <li><a class="dropdown-item" href="{% url 'authentication:user_settings' user.id %}"><i class="ri ri-home-gear-line"></i> Parametres</a></li>
                                 <li><a class="dropdown-item" href="{% url 'authentication:change_password' %}"><i class="ri ri-lock-line"></i> Mot de passe</a></li>
                                 <li><a class="dropdown-item" href="{% url 'authentication:logout' %}"><i class="ri ri-logout-box-line"></i> Se deconnecter</a></li>
                             </ul>

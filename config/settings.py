@@ -136,3 +136,12 @@ X_FRAME_OPTIONS = "SAMEORIGIN"
 CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=[])
 
 CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[])
+
+# Durée d'inactivité avant expiration (en secondes)
+SESSION_COOKIE_AGE = 3600   # 1 heure
+
+# Expire uniquement si l’utilisateur est inactif
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+
+# Rafraîchissement automatique de l'expiration à chaque requête
+SESSION_SAVE_EVERY_REQUEST = True

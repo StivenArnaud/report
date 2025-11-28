@@ -203,14 +203,17 @@ def change_password(request):
 
 
 @login_required
-def user_settings(request):
+def user_settings(request, user_id):
     try:
-        old_profile = Profile.objects.get(user=request.user, company=request.user.company)
-    except:
+        old_user = User.objects.get(pk=user_id)
+        old_profile = Profile.objects.get(user=old_user)
+    except Profile.DoesNotExist:
         old_profile = None
+    except User.DoesNotExist:
+        raise Http404('User does not exist')
 
     if request.method == 'POST':
-        form = UpdateUserForm(request.POST, request.FILES, instance=request.user)
+        form = UpdateUserForm(request.POST, request.FILES, instance=old_user)
         profile_form = UpdateProfileForm(request.POST, request.FILES, instance=old_profile or None)
         if form.is_valid() and profile_form.is_valid():
             user = form.save()
@@ -225,12 +228,14 @@ def user_settings(request):
         else:
             messages.error(request, _("Veuillez remplir tous les champs !"))
     else:
-        form = UpdateUserForm(instance=request.user)
+        form = UpdateUserForm(instance=old_user)
         profile_form = UpdateProfileForm(instance=old_profile or None)
 
     context = {
         'form': form,
         'profile_form': profile_form,
+        'single_user': old_user,
+        'profile': old_profile,
     }
 
     return render(request, 'frontend/authentication/user_settings.html', context)

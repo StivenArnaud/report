@@ -304,6 +304,9 @@ def weekly_daily_reports(request):
     Retourne les rapports quotidiens pour une semaine donnée,
     envoyée par HTMX via week_start (YYYY-MM-DD).
     """
+    if request.user.role != User.RH and request.user.role != User.ADMIN:
+        return redirect('reporting:list_reports')
+
     # 1) Récupérer la date envoyée par HTMX
     week_start_str = request.GET.get("week_start")
     total_reports = 0
